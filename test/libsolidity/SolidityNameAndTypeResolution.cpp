@@ -5963,6 +5963,12 @@ BOOST_AUTO_TEST_CASE(interface_function_external)
 BOOST_AUTO_TEST_CASE(interface_function_public)
 {
 	char const* text = R"(
+		interface I {
+			function f() public;
+		}
+	)";
+	CHECK_WARNING(text, "Functions in interfaces should be declared external.");
+	text = R"(
 		pragma experimental "v0.5.0";
 		interface I {
 			function f() public;
