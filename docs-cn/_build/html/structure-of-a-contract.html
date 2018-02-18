@@ -1,0 +1,216 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Structure of a Contract &#8212; Solidity 0.4.20 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.4.20',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Types" href="types.html" />
+    <link rel="prev" title="Layout of a Solidity Source File" href="layout-of-source-files.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="structure-of-a-contract">
+<span id="contract-structure"></span><span id="index-0"></span><h1>Structure of a Contract<a class="headerlink" href="#structure-of-a-contract" title="Permalink to this headline">¶</a></h1>
+<p>Contracts in Solidity are similar to classes in object-oriented languages.
+Each contract can contain declarations of <a class="reference internal" href="#structure-state-variables"><span class="std std-ref">State Variables</span></a>, <a class="reference internal" href="#structure-functions"><span class="std std-ref">Functions</span></a>,
+<a class="reference internal" href="#structure-function-modifiers"><span class="std std-ref">Function Modifiers</span></a>, <a class="reference internal" href="#structure-events"><span class="std std-ref">Events</span></a>, <a class="reference internal" href="#structure-struct-types"><span class="std std-ref">Struct Types</span></a> and <a class="reference internal" href="#structure-enum-types"><span class="std std-ref">Enum Types</span></a>.
+Furthermore, contracts can inherit from other contracts.</p>
+<div class="section" id="state-variables">
+<span id="structure-state-variables"></span><h2>State Variables<a class="headerlink" href="#state-variables" title="Permalink to this headline">¶</a></h2>
+<p>State variables are values which are permanently stored in contract storage.</p>
+<div class="highlight-Solidity"><div class="highlight"><pre><span></span><span class="k">pragma</span> <span class="nx">solidity</span> <span class="o">^</span><span class="mf">0.4</span><span class="p">.</span><span class="mi">0</span><span class="p">;</span>
+
+<span class="kd">contract</span> <span class="nx">SimpleStorage</span> <span class="p">{</span>
+    <span class="kt">uint</span> <span class="nx">storedData</span><span class="p">;</span> <span class="c1">// State variable</span>
+    <span class="c1">// ...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>See the <a class="reference internal" href="types.html#types"><span class="std std-ref">Types</span></a> section for valid state variable types and
+<a class="reference internal" href="contracts.html#visibility-and-getters"><span class="std std-ref">Visibility and Getters</span></a> for possible choices for
+visibility.</p>
+</div>
+<div class="section" id="functions">
+<span id="structure-functions"></span><h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<p>Functions are the executable units of code within a contract.</p>
+<div class="highlight-Solidity"><div class="highlight"><pre><span></span><span class="k">pragma</span> <span class="nx">solidity</span> <span class="o">^</span><span class="mf">0.4</span><span class="p">.</span><span class="mi">0</span><span class="p">;</span>
+
+<span class="kd">contract</span> <span class="nx">SimpleAuction</span> <span class="p">{</span>
+    <span class="kd">function</span> <span class="nx">bid</span><span class="p">()</span> <span class="k">public</span> <span class="k">payable</span> <span class="p">{</span> <span class="c1">// Function</span>
+        <span class="c1">// ...</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><a class="reference internal" href="control-structures.html#function-calls"><span class="std std-ref">Function Calls</span></a> can happen internally or externally
+and have different levels of visibility (<a class="reference internal" href="contracts.html#visibility-and-getters"><span class="std std-ref">Visibility and Getters</span></a>)
+towards other contracts.</p>
+</div>
+<div class="section" id="function-modifiers">
+<span id="structure-function-modifiers"></span><h2>Function Modifiers<a class="headerlink" href="#function-modifiers" title="Permalink to this headline">¶</a></h2>
+<p>Function modifiers can be used to amend the semantics of functions in a declarative way
+(see <a class="reference internal" href="contracts.html#modifiers"><span class="std std-ref">Function Modifiers</span></a> in contracts section).</p>
+<div class="highlight-Solidity"><div class="highlight"><pre><span></span><span class="k">pragma</span> <span class="nx">solidity</span> <span class="o">^</span><span class="mf">0.4</span><span class="p">.</span><span class="mi">11</span><span class="p">;</span>
+
+<span class="kd">contract</span> <span class="nx">Purchase</span> <span class="p">{</span>
+    <span class="kt">address</span> <span class="k">public</span> <span class="nx">seller</span><span class="p">;</span>
+
+    <span class="kd">modifier</span> <span class="nx">onlySeller</span><span class="p">()</span> <span class="p">{</span> <span class="c1">// Modifier</span>
+        <span class="nb">require</span><span class="p">(</span><span class="nb">msg</span><span class="p">.</span><span class="nx">sender</span> <span class="o">==</span> <span class="nx">seller</span><span class="p">);</span>
+        <span class="nx">_</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kd">function</span> <span class="nx">abort</span><span class="p">()</span> <span class="k">public</span> <span class="nx">onlySeller</span> <span class="p">{</span> <span class="c1">// Modifier usage</span>
+        <span class="c1">// ...</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="events">
+<span id="structure-events"></span><h2>Events<a class="headerlink" href="#events" title="Permalink to this headline">¶</a></h2>
+<p>Events are convenience interfaces with the EVM logging facilities.</p>
+<div class="highlight-Solidity"><div class="highlight"><pre><span></span><span class="k">pragma</span> <span class="nx">solidity</span> <span class="o">^</span><span class="mf">0.4</span><span class="p">.</span><span class="mi">0</span><span class="p">;</span>
+
+<span class="kd">contract</span> <span class="nx">SimpleAuction</span> <span class="p">{</span>
+    <span class="kd">event</span> <span class="nx">HighestBidIncreased</span><span class="p">(</span><span class="kt">address</span> <span class="nx">bidder</span><span class="p">,</span> <span class="kt">uint</span> <span class="nx">amount</span><span class="p">);</span> <span class="c1">// Event</span>
+
+    <span class="kd">function</span> <span class="nx">bid</span><span class="p">()</span> <span class="k">public</span> <span class="k">payable</span> <span class="p">{</span>
+        <span class="c1">// ...</span>
+        <span class="nx">HighestBidIncreased</span><span class="p">(</span><span class="nb">msg</span><span class="p">.</span><span class="nx">sender</span><span class="p">,</span> <span class="nb">msg</span><span class="p">.</span><span class="nx">value</span><span class="p">);</span> <span class="c1">// Triggering event</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>See <a class="reference internal" href="contracts.html#events"><span class="std std-ref">Events</span></a> in contracts section for information on how events are declared
+and can be used from within a dapp.</p>
+</div>
+<div class="section" id="struct-types">
+<span id="structure-struct-types"></span><h2>Struct Types<a class="headerlink" href="#struct-types" title="Permalink to this headline">¶</a></h2>
+<p>Structs are custom defined types that can group several variables (see
+<a class="reference internal" href="types.html#structs"><span class="std std-ref">Structs</span></a> in types section).</p>
+<div class="highlight-Solidity"><div class="highlight"><pre><span></span><span class="k">pragma</span> <span class="nx">solidity</span> <span class="o">^</span><span class="mf">0.4</span><span class="p">.</span><span class="mi">0</span><span class="p">;</span>
+
+<span class="kd">contract</span> <span class="nx">Ballot</span> <span class="p">{</span>
+    <span class="kd">struct</span> <span class="nx">Voter</span> <span class="p">{</span> <span class="c1">// Struct</span>
+        <span class="kt">uint</span> <span class="nx">weight</span><span class="p">;</span>
+        <span class="kt">bool</span> <span class="nx">voted</span><span class="p">;</span>
+        <span class="kt">address</span> <span class="nx">delegate</span><span class="p">;</span>
+        <span class="kt">uint</span> <span class="nx">vote</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="enum-types">
+<span id="structure-enum-types"></span><h2>Enum Types<a class="headerlink" href="#enum-types" title="Permalink to this headline">¶</a></h2>
+<p>Enums can be used to create custom types with a finite set of values (see
+<a class="reference internal" href="types.html#enums"><span class="std std-ref">Enums</span></a> in types section).</p>
+<div class="highlight-Solidity"><div class="highlight"><pre><span></span><span class="k">pragma</span> <span class="nx">solidity</span> <span class="o">^</span><span class="mf">0.4</span><span class="p">.</span><span class="mi">0</span><span class="p">;</span>
+
+<span class="kd">contract</span> <span class="nx">Purchase</span> <span class="p">{</span>
+    <span class="kd">enum</span> <span class="nx">State</span> <span class="p">{</span> <span class="nx">Created</span><span class="p">,</span> <span class="nx">Locked</span><span class="p">,</span> <span class="nx">Inactive</span> <span class="p">}</span> <span class="c1">// Enum</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Structure of a Contract</a><ul>
+<li><a class="reference internal" href="#state-variables">State Variables</a></li>
+<li><a class="reference internal" href="#functions">Functions</a></li>
+<li><a class="reference internal" href="#function-modifiers">Function Modifiers</a></li>
+<li><a class="reference internal" href="#events">Events</a></li>
+<li><a class="reference internal" href="#struct-types">Struct Types</a></li>
+<li><a class="reference internal" href="#enum-types">Enum Types</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="solidity-in-depth.html">Solidity in Depth</a><ul>
+      <li>Previous: <a href="layout-of-source-files.html" title="previous chapter">Layout of a Solidity Source File</a></li>
+      <li>Next: <a href="types.html" title="next chapter">Types</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/structure-of-a-contract.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016-2017, Ethereum.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/structure-of-a-contract.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

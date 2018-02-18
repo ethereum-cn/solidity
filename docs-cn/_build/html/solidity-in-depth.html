@@ -1,0 +1,177 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Solidity in Depth &#8212; Solidity 0.4.20 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.4.20',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Layout of a Solidity Source File" href="layout-of-source-files.html" />
+    <link rel="prev" title="Solidity by Example" href="solidity-by-example.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="solidity-in-depth">
+<h1>Solidity in Depth<a class="headerlink" href="#solidity-in-depth" title="Permalink to this headline">¶</a></h1>
+<p>This section should provide you with all you need to know about Solidity.
+If something is missing here, please contact us on
+<a class="reference external" href="https://gitter.im/ethereum/solidity">Gitter</a> or make a pull request on
+<a class="reference external" href="https://github.com/ethereum/solidity/pulls">Github</a>.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="layout-of-source-files.html">Layout of a Solidity Source File</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="layout-of-source-files.html#version-pragma">Version Pragma</a></li>
+<li class="toctree-l2"><a class="reference internal" href="layout-of-source-files.html#importing-other-source-files">Importing other Source Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="layout-of-source-files.html#comments">Comments</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="structure-of-a-contract.html">Structure of a Contract</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="structure-of-a-contract.html#state-variables">State Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="structure-of-a-contract.html#functions">Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="structure-of-a-contract.html#function-modifiers">Function Modifiers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="structure-of-a-contract.html#events">Events</a></li>
+<li class="toctree-l2"><a class="reference internal" href="structure-of-a-contract.html#struct-types">Struct Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="structure-of-a-contract.html#enum-types">Enum Types</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="types.html">Types</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="types.html#value-types">Value Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="types.html#reference-types">Reference Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="types.html#mappings">Mappings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="types.html#operators-involving-lvalues">Operators Involving LValues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="types.html#conversions-between-elementary-types">Conversions between Elementary Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="types.html#type-deduction">Type Deduction</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="units-and-global-variables.html">Units and Globally Available Variables</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="units-and-global-variables.html#ether-units">Ether Units</a></li>
+<li class="toctree-l2"><a class="reference internal" href="units-and-global-variables.html#time-units">Time Units</a></li>
+<li class="toctree-l2"><a class="reference internal" href="units-and-global-variables.html#special-variables-and-functions">Special Variables and Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="control-structures.html">Expressions and Control Structures</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="control-structures.html#input-parameters-and-output-parameters">Input Parameters and Output Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="control-structures.html#control-structures">Control Structures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="control-structures.html#function-calls">Function Calls</a></li>
+<li class="toctree-l2"><a class="reference internal" href="control-structures.html#creating-contracts-via-new">Creating Contracts via <code class="docutils literal"><span class="pre">new</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="control-structures.html#order-of-evaluation-of-expressions">Order of Evaluation of Expressions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="control-structures.html#assignment">Assignment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="control-structures.html#scoping-and-declarations">Scoping and Declarations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="control-structures.html#error-handling-assert-require-revert-and-exceptions">Error handling: Assert, Require, Revert and Exceptions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contracts.html">Contracts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contracts.html#creating-contracts">Creating Contracts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contracts.html#visibility-and-getters">Visibility and Getters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contracts.html#function-modifiers">Function Modifiers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contracts.html#constant-state-variables">Constant State Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contracts.html#functions">Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contracts.html#events">Events</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contracts.html#inheritance">Inheritance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contracts.html#abstract-contracts">Abstract Contracts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contracts.html#interfaces">Interfaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contracts.html#libraries">Libraries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contracts.html#using-for">Using For</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="assembly.html">Solidity Assembly</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="assembly.html#inline-assembly">Inline Assembly</a></li>
+<li class="toctree-l2"><a class="reference internal" href="assembly.html#standalone-assembly">Standalone Assembly</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="miscellaneous.html">Miscellaneous</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="miscellaneous.html#layout-of-state-variables-in-storage">Layout of State Variables in Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="miscellaneous.html#layout-in-memory">Layout in Memory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="miscellaneous.html#layout-of-call-data">Layout of Call Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="miscellaneous.html#internals-cleaning-up-variables">Internals - Cleaning Up Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="miscellaneous.html#internals-the-optimizer">Internals - The Optimizer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="miscellaneous.html#source-mappings">Source Mappings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="miscellaneous.html#tips-and-tricks">Tips and Tricks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="miscellaneous.html#cheatsheet">Cheatsheet</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="solidity-by-example.html" title="previous chapter">Solidity by Example</a></li>
+      <li>Next: <a href="layout-of-source-files.html" title="next chapter">Layout of a Solidity Source File</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/solidity-in-depth.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016-2017, Ethereum.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/solidity-in-depth.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,281 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>List of Known Bugs &#8212; Solidity 0.4.20 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.4.20',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Contributing" href="contributing.html" />
+    <link rel="prev" title="Common Patterns" href="common-patterns.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="list-of-known-bugs">
+<span id="known-bugs"></span><span id="index-0"></span><h1>List of Known Bugs<a class="headerlink" href="#list-of-known-bugs" title="Permalink to this headline">¶</a></h1>
+<p>Below, you can find a JSON-formatted list of some of the known security-relevant bugs in the
+Solidity compiler. The file itself is hosted in the <a class="reference external" href="https://github.com/ethereum/solidity/blob/develop/docs/bugs.json">Github repository</a>.
+The list stretches back as far as version 0.3.0, bugs known to be present only
+in versions preceding that are not listed.</p>
+<p>There is another file called <a class="reference external" href="https://github.com/ethereum/solidity/blob/develop/docs/bugs_by_version.json">bugs_by_version.json</a>,
+which can be used to check which bugs affect a specific version of the compiler.</p>
+<p>Contract source verification tools and also other tools interacting with
+contracts should consult this list according to the following criteria:</p>
+<blockquote>
+<div><ul class="simple">
+<li>It is mildly suspicious if a contract was compiled with a nightly
+compiler version instead of a released version. This list does not keep
+track of unreleased or nightly versions.</li>
+<li>It is also mildly suspicious if a contract was compiled with a version that was
+not the most recent at the time the contract was created. For contracts
+created from other contracts, you have to follow the creation chain
+back to a transaction and use the date of that transaction as creation date.</li>
+<li>It is highly suspicious if a contract was compiled with a compiler that
+contains a known bug and the contract was created at a time where a newer
+compiler version containing a fix was already released.</li>
+</ul>
+</div></blockquote>
+<p>The JSON file of known bugs below is an array of objects, one for each bug,
+with the following keys:</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd>Unique name given to the bug</dd>
+<dt>summary</dt>
+<dd>Short description of the bug</dd>
+<dt>description</dt>
+<dd>Detailed description of the bug</dd>
+<dt>link</dt>
+<dd>URL of a website with more detailed information, optional</dd>
+<dt>introduced</dt>
+<dd>The first published compiler version that contained the bug, optional</dd>
+<dt>fixed</dt>
+<dd>The first published compiler version that did not contain the bug anymore</dd>
+<dt>publish</dt>
+<dd>The date at which the bug became known publicly, optional</dd>
+<dt>severity</dt>
+<dd>Severity of the bug: very low, low, medium, high. Takes into account
+discoverability in contract tests, likelihood of occurrence and
+potential damage by exploits.</dd>
+<dt>conditions</dt>
+<dd>Conditions that have to be met to trigger the bug. Currently, this
+is an object that can contain a boolean value <code class="docutils literal"><span class="pre">optimizer</span></code>, which
+means that the optimizer has to be switched on to enable the bug.
+If no conditions are given, assume that the bug is present.</dd>
+</dl>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;ZeroFunctionSelector&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;summary&quot;</span><span class="o">:</span> <span class="s2">&quot;It is possible to craft the name of a function such that it is executed instead of the fallback function in very specific circumstances.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;description&quot;</span><span class="o">:</span> <span class="s2">&quot;If a function has a selector consisting only of zeros, is payable and part of a contract that does not have a fallback function and at most five external functions in total, this function is called instead of the fallback function if Ether is sent to the contract without data.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;fixed&quot;</span><span class="o">:</span> <span class="s2">&quot;0.4.18&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;severity&quot;</span><span class="o">:</span> <span class="s2">&quot;very low&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;DelegateCallReturnValue&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;summary&quot;</span><span class="o">:</span> <span class="s2">&quot;The low-level .delegatecall() does not return the execution outcome, but converts the value returned by the functioned called to a boolean instead.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;description&quot;</span><span class="o">:</span> <span class="s2">&quot;The return value of the low-level .delegatecall() function is taken from a position in memory, where the call data or the return data resides. This value is interpreted as a boolean and put onto the stack. This means if the called function returns at least 32 zero bytes, .delegatecall() returns false even if the call was successuful.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;introduced&quot;</span><span class="o">:</span> <span class="s2">&quot;0.3.0&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;fixed&quot;</span><span class="o">:</span> <span class="s2">&quot;0.4.15&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;severity&quot;</span><span class="o">:</span> <span class="s2">&quot;low&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;ECRecoverMalformedInput&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;summary&quot;</span><span class="o">:</span> <span class="s2">&quot;The ecrecover() builtin can return garbage for malformed input.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;description&quot;</span><span class="o">:</span> <span class="s2">&quot;The ecrecover precompile does not properly signal failure for malformed input (especially in the &#39;v&#39; argument) and thus the Solidity function can return data that was previously present in the return area in memory.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;fixed&quot;</span><span class="o">:</span> <span class="s2">&quot;0.4.14&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;severity&quot;</span><span class="o">:</span> <span class="s2">&quot;medium&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;SkipEmptyStringLiteral&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;summary&quot;</span><span class="o">:</span> <span class="s2">&quot;If \&quot;\&quot; is used in a function call, the following function arguments will not be correctly passed to the function.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;description&quot;</span><span class="o">:</span> <span class="s2">&quot;If the empty string literal \&quot;\&quot; is used as an argument in a function call, it is skipped by the encoder. This has the effect that the encoding of all arguments following this is shifted left by 32 bytes and thus the function call data is corrupted.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;fixed&quot;</span><span class="o">:</span> <span class="s2">&quot;0.4.12&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;severity&quot;</span><span class="o">:</span> <span class="s2">&quot;low&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;ConstantOptimizerSubtraction&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;summary&quot;</span><span class="o">:</span> <span class="s2">&quot;In some situations, the optimizer replaces certain numbers in the code with routines that compute different numbers.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;description&quot;</span><span class="o">:</span> <span class="s2">&quot;The optimizer tries to represent any number in the bytecode by routines that compute them with less gas. For some special numbers, an incorrect routine is generated. This could allow an attacker to e.g. trick victims about a specific amount of ether, or function calls to call different functions (or none at all).&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;link&quot;</span><span class="o">:</span> <span class="s2">&quot;https://blog.ethereum.org/2017/05/03/solidity-optimizer-bug/&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;fixed&quot;</span><span class="o">:</span> <span class="s2">&quot;0.4.11&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;severity&quot;</span><span class="o">:</span> <span class="s2">&quot;low&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;conditions&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;optimizer&quot;</span><span class="o">:</span> <span class="kc">true</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;IdentityPrecompileReturnIgnored&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;summary&quot;</span><span class="o">:</span> <span class="s2">&quot;Failure of the identity precompile was ignored.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;description&quot;</span><span class="o">:</span> <span class="s2">&quot;Calls to the identity contract, which is used for copying memory, ignored its return value. On the public chain, calls to the identity precompile can be made in a way that they never fail, but this might be different on private chains.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;severity&quot;</span><span class="o">:</span> <span class="s2">&quot;low&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;fixed&quot;</span><span class="o">:</span> <span class="s2">&quot;0.4.7&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;OptimizerStateKnowledgeNotResetForJumpdest&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;summary&quot;</span><span class="o">:</span> <span class="s2">&quot;The optimizer did not properly reset its internal state at jump destinations, which could lead to data corruption.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;description&quot;</span><span class="o">:</span> <span class="s2">&quot;The optimizer performs symbolic execution at certain stages. At jump destinations, multiple code paths join and thus it has to compute a common state from the incoming edges. Computing this common state was simplified to just use the empty state, but this implementation was not done properly. This bug can cause data corruption.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;severity&quot;</span><span class="o">:</span> <span class="s2">&quot;medium&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;introduced&quot;</span><span class="o">:</span> <span class="s2">&quot;0.4.5&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;fixed&quot;</span><span class="o">:</span> <span class="s2">&quot;0.4.6&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;conditions&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;optimizer&quot;</span><span class="o">:</span> <span class="kc">true</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;HighOrderByteCleanStorage&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;summary&quot;</span><span class="o">:</span> <span class="s2">&quot;For short types, the high order bytes were not cleaned properly and could overwrite existing data.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;description&quot;</span><span class="o">:</span> <span class="s2">&quot;Types shorter than 32 bytes are packed together into the same 32 byte storage slot, but storage writes always write 32 bytes. For some types, the higher order bytes were not cleaned properly, which made it sometimes possible to overwrite a variable in storage when writing to another one.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;link&quot;</span><span class="o">:</span> <span class="s2">&quot;https://blog.ethereum.org/2016/11/01/security-alert-solidity-variables-can-overwritten-storage/&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;severity&quot;</span><span class="o">:</span> <span class="s2">&quot;high&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;introduced&quot;</span><span class="o">:</span> <span class="s2">&quot;0.1.6&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;fixed&quot;</span><span class="o">:</span> <span class="s2">&quot;0.4.4&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;OptimizerStaleKnowledgeAboutSHA3&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;summary&quot;</span><span class="o">:</span> <span class="s2">&quot;The optimizer did not properly reset its knowledge about SHA3 operations resulting in some hashes (also used for storage variable positions) not being calculated correctly.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;description&quot;</span><span class="o">:</span> <span class="s2">&quot;The optimizer performs symbolic execution in order to save re-evaluating expressions whose value is already known. This knowledge was not properly reset across control flow paths and thus the optimizer sometimes thought that the result of a SHA3 operation is already present on the stack. This could result in data corruption by accessing the wrong storage slot.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;severity&quot;</span><span class="o">:</span> <span class="s2">&quot;medium&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;fixed&quot;</span><span class="o">:</span> <span class="s2">&quot;0.4.3&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;conditions&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;optimizer&quot;</span><span class="o">:</span> <span class="kc">true</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;LibrariesNotCallableFromPayableFunctions&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;summary&quot;</span><span class="o">:</span> <span class="s2">&quot;Library functions threw an exception when called from a call that received Ether.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;description&quot;</span><span class="o">:</span> <span class="s2">&quot;Library functions are protected against sending them Ether through a call. Since the DELEGATECALL opcode forwards the information about how much Ether was sent with a call, the library function incorrectly assumed that Ether was sent to the library and threw an exception.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;severity&quot;</span><span class="o">:</span> <span class="s2">&quot;low&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;introduced&quot;</span><span class="o">:</span> <span class="s2">&quot;0.4.0&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;fixed&quot;</span><span class="o">:</span> <span class="s2">&quot;0.4.2&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;SendFailsForZeroEther&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;summary&quot;</span><span class="o">:</span> <span class="s2">&quot;The send function did not provide enough gas to the recipient if no Ether was sent with it.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;description&quot;</span><span class="o">:</span> <span class="s2">&quot;The recipient of an Ether transfer automatically receives a certain amount of gas from the EVM to handle the transfer. In the case of a zero-transfer, this gas is not provided which causes the recipient to throw an exception.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;severity&quot;</span><span class="o">:</span> <span class="s2">&quot;low&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;fixed&quot;</span><span class="o">:</span> <span class="s2">&quot;0.4.0&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;DynamicAllocationInfiniteLoop&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;summary&quot;</span><span class="o">:</span> <span class="s2">&quot;Dynamic allocation of an empty memory array caused an infinite loop and thus an exception.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;description&quot;</span><span class="o">:</span> <span class="s2">&quot;Memory arrays can be created provided a length. If this length is zero, code was generated that did not terminate and thus consumed all gas.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;severity&quot;</span><span class="o">:</span> <span class="s2">&quot;low&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;fixed&quot;</span><span class="o">:</span> <span class="s2">&quot;0.3.6&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;OptimizerClearStateOnCodePathJoin&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;summary&quot;</span><span class="o">:</span> <span class="s2">&quot;The optimizer did not properly reset its internal state at jump destinations, which could lead to data corruption.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;description&quot;</span><span class="o">:</span> <span class="s2">&quot;The optimizer performs symbolic execution at certain stages. At jump destinations, multiple code paths join and thus it has to compute a common state from the incoming edges. Computing this common state was not done correctly. This bug can cause data corruption, but it is probably quite hard to use for targeted attacks.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;severity&quot;</span><span class="o">:</span> <span class="s2">&quot;low&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;fixed&quot;</span><span class="o">:</span> <span class="s2">&quot;0.3.6&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;conditions&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="s2">&quot;optimizer&quot;</span><span class="o">:</span> <span class="kc">true</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;CleanBytesHigherOrderBits&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;summary&quot;</span><span class="o">:</span> <span class="s2">&quot;The higher order bits of short bytesNN types were not cleaned before comparison.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;description&quot;</span><span class="o">:</span> <span class="s2">&quot;Two variables of type bytesNN were considered different if their higher order bits, which are not part of the actual value, were different. An attacker might use this to reach seemingly unreachable code paths by providing incorrectly formatted input data.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;severity&quot;</span><span class="o">:</span> <span class="s2">&quot;medium/high&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;fixed&quot;</span><span class="o">:</span> <span class="s2">&quot;0.3.3&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;ArrayAccessCleanHigherOrderBits&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;summary&quot;</span><span class="o">:</span> <span class="s2">&quot;Access to array elements for arrays of types with less than 32 bytes did not correctly clean the higher order bits, causing corruption in other array elements.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;description&quot;</span><span class="o">:</span> <span class="s2">&quot;Multiple elements of an array of values that are shorter than 17 bytes are packed into the same storage slot. Writing to a single element of such an array did not properly clean the higher order bytes and thus could lead to data corruption.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;severity&quot;</span><span class="o">:</span> <span class="s2">&quot;medium/high&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;fixed&quot;</span><span class="o">:</span> <span class="s2">&quot;0.3.1&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;AncientCompiler&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;summary&quot;</span><span class="o">:</span> <span class="s2">&quot;This compiler version is ancient and might contain several undocumented or undiscovered bugs.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;description&quot;</span><span class="o">:</span> <span class="s2">&quot;The list of bugs is only kept for compiler versions starting from 0.3.0, so older versions might contain undocumented bugs.&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;severity&quot;</span><span class="o">:</span> <span class="s2">&quot;high&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;fixed&quot;</span><span class="o">:</span> <span class="s2">&quot;0.3.0&quot;</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="common-patterns.html" title="previous chapter">Common Patterns</a></li>
+      <li>Next: <a href="contributing.html" title="next chapter">Contributing</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/bugs.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016-2017, Ethereum.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/bugs.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

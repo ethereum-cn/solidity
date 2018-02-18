@@ -1,0 +1,274 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Layout of a Solidity Source File &#8212; Solidity 0.4.20 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.4.20',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Structure of a Contract" href="structure-of-a-contract.html" />
+    <link rel="prev" title="Solidity in Depth" href="solidity-in-depth.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="layout-of-a-solidity-source-file">
+<h1>Layout of a Solidity Source File<a class="headerlink" href="#layout-of-a-solidity-source-file" title="Permalink to this headline">¶</a></h1>
+<p>Source files can contain an arbitrary number of contract definitions, include directives
+and pragma directives.</p>
+<div class="section" id="version-pragma">
+<span id="index-0"></span><span id="id1"></span><h2>Version Pragma<a class="headerlink" href="#version-pragma" title="Permalink to this headline">¶</a></h2>
+<p>Source files can (and should) be annotated with a so-called version pragma to reject
+being compiled with future compiler versions that might introduce incompatible
+changes. We try to keep such changes to an absolute minimum and especially
+introduce changes in a way that changes in semantics will also require changes
+in the syntax, but this is of course not always possible. Because of that, it is always
+a good idea to read through the changelog at least for releases that contain
+breaking changes, those releases will always have versions of the form
+<code class="docutils literal"><span class="pre">0.x.0</span></code> or <code class="docutils literal"><span class="pre">x.0.0</span></code>.</p>
+<p>The version pragma is used as follows:</p>
+<div class="highlight-Solidity"><div class="highlight"><pre><span></span><span class="k">pragma</span> <span class="nx">solidity</span> <span class="o">^</span><span class="mf">0.4</span><span class="p">.</span><span class="mi">0</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Such a source file will not compile with a compiler earlier than version 0.4.0
+and it will also not work on a compiler starting from version 0.5.0 (this
+second condition is added by using <code class="docutils literal"><span class="pre">^</span></code>). The idea behind this is that
+there will be no breaking changes until version <code class="docutils literal"><span class="pre">0.5.0</span></code>, so we can always
+be sure that our code will compile the way we intended it to. We do not fix
+the exact version of the compiler, so that bugfix releases are still possible.</p>
+<p>It is possible to specify much more complex rules for the compiler version,
+the expression follows those used by <a class="reference external" href="https://docs.npmjs.com/misc/semver">npm</a>.</p>
+</div>
+<div class="section" id="importing-other-source-files">
+<span id="import"></span><span id="index-1"></span><h2>Importing other Source Files<a class="headerlink" href="#importing-other-source-files" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="syntax-and-semantics">
+<h3>Syntax and Semantics<a class="headerlink" href="#syntax-and-semantics" title="Permalink to this headline">¶</a></h3>
+<p>Solidity supports import statements that are very similar to those available in JavaScript
+(from ES6 on), although Solidity does not know the concept of a “default export”.</p>
+<p>At a global level, you can use import statements of the following form:</p>
+<div class="highlight-Solidity"><div class="highlight"><pre><span></span><span class="k">import</span> <span class="s2">&quot;filename&quot;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>This statement imports all global symbols from “filename” (and symbols imported there) into the
+current global scope (different than in ES6 but backwards-compatible for Solidity).</p>
+<div class="highlight-Solidity"><div class="highlight"><pre><span></span><span class="k">import</span> <span class="o">*</span> <span class="k">as</span> <span class="nx">symbolName</span> <span class="nx">from</span> <span class="s2">&quot;filename&quot;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>…creates a new global symbol <code class="docutils literal"><span class="pre">symbolName</span></code> whose members are all the global symbols from <code class="docutils literal"><span class="pre">&quot;filename&quot;</span></code>.</p>
+<div class="highlight-Solidity"><div class="highlight"><pre><span></span><span class="k">import</span> <span class="p">{</span><span class="nx">symbol1</span> <span class="k">as</span> <span class="nx">alias</span><span class="p">,</span> <span class="nx">symbol2</span><span class="p">}</span> <span class="nx">from</span> <span class="s2">&quot;filename&quot;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>…creates new global symbols <code class="docutils literal"><span class="pre">alias</span></code> and <code class="docutils literal"><span class="pre">symbol2</span></code> which reference <code class="docutils literal"><span class="pre">symbol1</span></code> and <code class="docutils literal"><span class="pre">symbol2</span></code> from <code class="docutils literal"><span class="pre">&quot;filename&quot;</span></code>, respectively.</p>
+<p>Another syntax is not part of ES6, but probably convenient:</p>
+<div class="highlight-Solidity"><div class="highlight"><pre><span></span><span class="k">import</span> <span class="s2">&quot;filename&quot;</span> <span class="k">as</span> <span class="nx">symbolName</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>which is equivalent to <code class="docutils literal"><span class="pre">import</span> <span class="pre">*</span> <span class="pre">as</span> <span class="pre">symbolName</span> <span class="pre">from</span> <span class="pre">&quot;filename&quot;;</span></code>.</p>
+</div>
+<div class="section" id="paths">
+<h3>Paths<a class="headerlink" href="#paths" title="Permalink to this headline">¶</a></h3>
+<p>In the above, <code class="docutils literal"><span class="pre">filename</span></code> is always treated as a path with <code class="docutils literal"><span class="pre">/</span></code> as directory separator,
+<code class="docutils literal"><span class="pre">.</span></code> as the current and <code class="docutils literal"><span class="pre">..</span></code> as the parent directory.  When <code class="docutils literal"><span class="pre">.</span></code> or <code class="docutils literal"><span class="pre">..</span></code> is followed by a character except <code class="docutils literal"><span class="pre">/</span></code>,
+it is not considered as the current or the parent directory.
+All path names are treated as absolute paths unless they start with the current <code class="docutils literal"><span class="pre">.</span></code> or the parent directory <code class="docutils literal"><span class="pre">..</span></code>.</p>
+<p>To import a file <code class="docutils literal"><span class="pre">x</span></code> from the same directory as the current file, use <code class="docutils literal"><span class="pre">import</span> <span class="pre">&quot;./x&quot;</span> <span class="pre">as</span> <span class="pre">x;</span></code>.
+If you use <code class="docutils literal"><span class="pre">import</span> <span class="pre">&quot;x&quot;</span> <span class="pre">as</span> <span class="pre">x;</span></code> instead, a different file could be referenced
+(in a global “include directory”).</p>
+<p>It depends on the compiler (see below) how to actually resolve the paths.
+In general, the directory hierarchy does not need to strictly map onto your local
+filesystem, it can also map to resources discovered via e.g. ipfs, http or git.</p>
+</div>
+<div class="section" id="use-in-actual-compilers">
+<h3>Use in Actual Compilers<a class="headerlink" href="#use-in-actual-compilers" title="Permalink to this headline">¶</a></h3>
+<p>When the compiler is invoked, it is not only possible to specify how to
+discover the first element of a path, but it is possible to specify path prefix
+remappings so that e.g. <code class="docutils literal"><span class="pre">github.com/ethereum/dapp-bin/library</span></code> is remapped to
+<code class="docutils literal"><span class="pre">/usr/local/dapp-bin/library</span></code> and the compiler will read the files from there.
+If multiple remappings can be applied, the one with the longest key is tried first. This
+allows for a “fallback-remapping” with e.g. <code class="docutils literal"><span class="pre">&quot;&quot;</span></code> maps to
+<code class="docutils literal"><span class="pre">&quot;/usr/local/include/solidity&quot;</span></code>. Furthermore, these remappings can
+depend on the context, which allows you to configure packages to
+import e.g. different versions of a library of the same name.</p>
+<p><strong>solc</strong>:</p>
+<p>For solc (the commandline compiler), these remappings are provided as
+<code class="docutils literal"><span class="pre">context:prefix=target</span></code> arguments, where both the <code class="docutils literal"><span class="pre">context:</span></code> and the
+<code class="docutils literal"><span class="pre">=target</span></code> parts are optional (where target defaults to prefix in that
+case). All remapping values that are regular files are compiled (including
+their dependencies). This mechanism is completely backwards-compatible (as long
+as no filename contains = or :) and thus not a breaking change. All imports
+in files in or below the directory <code class="docutils literal"><span class="pre">context</span></code> that import a file that
+starts with <code class="docutils literal"><span class="pre">prefix</span></code> are redirected by replacing <code class="docutils literal"><span class="pre">prefix</span></code> by <code class="docutils literal"><span class="pre">target</span></code>.</p>
+<p>So as an example, if you clone
+<code class="docutils literal"><span class="pre">github.com/ethereum/dapp-bin/</span></code> locally to <code class="docutils literal"><span class="pre">/usr/local/dapp-bin</span></code>, you can use
+the following in your source file:</p>
+<div class="highlight-Solidity"><div class="highlight"><pre><span></span><span class="k">import</span> <span class="s2">&quot;github.com/ethereum/dapp-bin/library/iterable_mapping.sol&quot;</span> <span class="k">as</span> <span class="nx">it_mapping</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>and then run the compiler as</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>solc github.com/ethereum/dapp-bin/<span class="o">=</span>/usr/local/dapp-bin/ source.sol
+</pre></div>
+</div>
+<p>As a more complex example, suppose you rely on some module that uses a
+very old version of dapp-bin. That old version of dapp-bin is checked
+out at <code class="docutils literal"><span class="pre">/usr/local/dapp-bin_old</span></code>, then you can use</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>solc module1:github.com/ethereum/dapp-bin/<span class="o">=</span>/usr/local/dapp-bin/ <span class="se">\</span>
+     module2:github.com/ethereum/dapp-bin/<span class="o">=</span>/usr/local/dapp-bin_old/ <span class="se">\</span>
+     source.sol
+</pre></div>
+</div>
+<p>so that all imports in <code class="docutils literal"><span class="pre">module2</span></code> point to the old version but imports
+in <code class="docutils literal"><span class="pre">module1</span></code> get the new version.</p>
+<p>Note that solc only allows you to include files from certain directories:
+They have to be in the directory (or subdirectory) of one of the explicitly
+specified source files or in the directory (or subdirectory) of a remapping
+target. If you want to allow direct absolute includes, just add the
+remapping <code class="docutils literal"><span class="pre">=/</span></code>.</p>
+<p>If there are multiple remappings that lead to a valid file, the remapping
+with the longest common prefix is chosen.</p>
+<p><strong>Remix</strong>:</p>
+<p><a class="reference external" href="https://remix.ethereum.org/">Remix</a>
+provides an automatic remapping for github and will also automatically retrieve
+the file over the network:
+You can import the iterable mapping by e.g.
+<code class="docutils literal"><span class="pre">import</span> <span class="pre">&quot;github.com/ethereum/dapp-bin/library/iterable_mapping.sol&quot;</span> <span class="pre">as</span> <span class="pre">it_mapping;</span></code>.</p>
+<p>Other source code providers may be added in the future.</p>
+</div>
+</div>
+<div class="section" id="comments">
+<span id="index-2"></span><h2>Comments<a class="headerlink" href="#comments" title="Permalink to this headline">¶</a></h2>
+<p>Single-line comments (<code class="docutils literal"><span class="pre">//</span></code>) and multi-line comments (<code class="docutils literal"><span class="pre">/*...*/</span></code>) are possible.</p>
+<div class="highlight-Solidity"><div class="highlight"><pre><span></span><span class="c1">// This is a single-line comment.</span>
+
+<span class="cm">/*</span>
+<span class="cm">This is a</span>
+<span class="cm">multi-line comment.</span>
+<span class="cm">*/</span>
+</pre></div>
+</div>
+<p>Additionally, there is another type of comment called a natspec comment,
+for which the documentation is not yet written. They are written with a
+triple slash (<code class="docutils literal"><span class="pre">///</span></code>) or a double asterisk block(<code class="docutils literal"><span class="pre">/**</span> <span class="pre">...</span> <span class="pre">*/</span></code>) and
+they should be used directly above function declarations or statements.
+You can use <a class="reference external" href="https://en.wikipedia.org/wiki/Doxygen">Doxygen</a>-style tags inside these comments to document
+functions, annotate conditions for formal verification, and provide a
+<strong>confirmation text</strong> which is shown to users when they attempt to invoke a
+function.</p>
+<p>In the following example we document the title of the contract, the explanation
+for the two input parameters and two returned values.</p>
+<div class="highlight-Solidity"><div class="highlight"><pre><span></span><span class="k">pragma</span> <span class="nx">solidity</span> <span class="o">^</span><span class="mf">0.4</span><span class="p">.</span><span class="mi">0</span><span class="p">;</span>
+
+<span class="cs">/** </span><span class="k">@title</span><span class="cs"> Shape calculator. */</span>
+<span class="kd">contract</span> <span class="nx">shapeCalculator</span> <span class="p">{</span>
+    <span class="cs">/** </span><span class="k">@dev</span><span class="cs"> Calculates a rectangle&#39;s surface and perimeter.</span>
+<span class="cs">      * </span><span class="k">@param</span><span class="cs"> w Width of the rectangle.</span>
+<span class="cs">      * </span><span class="k">@param</span><span class="cs"> h Height of the rectangle.</span>
+<span class="cs">      * </span><span class="k">@return</span><span class="cs"> s The calculated surface.</span>
+<span class="cs">      * </span><span class="k">@return</span><span class="cs"> p The calculated perimeter.</span>
+<span class="cs">      */</span>
+    <span class="kd">function</span> <span class="nx">rectangle</span><span class="p">(</span><span class="kt">uint</span> <span class="nx">w</span><span class="p">,</span> <span class="kt">uint</span> <span class="nx">h</span><span class="p">)</span> <span class="k">returns</span> <span class="p">(</span><span class="kt">uint</span> <span class="nx">s</span><span class="p">,</span> <span class="kt">uint</span> <span class="nx">p</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">s</span> <span class="o">=</span> <span class="nx">w</span> <span class="o">*</span> <span class="nx">h</span><span class="p">;</span>
+        <span class="nx">p</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="nx">w</span> <span class="o">+</span> <span class="nx">h</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Layout of a Solidity Source File</a><ul>
+<li><a class="reference internal" href="#version-pragma">Version Pragma</a></li>
+<li><a class="reference internal" href="#importing-other-source-files">Importing other Source Files</a><ul>
+<li><a class="reference internal" href="#syntax-and-semantics">Syntax and Semantics</a></li>
+<li><a class="reference internal" href="#paths">Paths</a></li>
+<li><a class="reference internal" href="#use-in-actual-compilers">Use in Actual Compilers</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#comments">Comments</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="solidity-in-depth.html">Solidity in Depth</a><ul>
+      <li>Previous: <a href="solidity-in-depth.html" title="previous chapter">Solidity in Depth</a></li>
+      <li>Next: <a href="structure-of-a-contract.html" title="next chapter">Structure of a Contract</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/layout-of-source-files.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016-2017, Ethereum.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/layout-of-source-files.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

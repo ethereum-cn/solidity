@@ -1,0 +1,285 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Units and Globally Available Variables &#8212; Solidity 0.4.20 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.4.20',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Expressions and Control Structures" href="control-structures.html" />
+    <link rel="prev" title="Types" href="types.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="units-and-globally-available-variables">
+<h1>Units and Globally Available Variables<a class="headerlink" href="#units-and-globally-available-variables" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="ether-units">
+<span id="index-0"></span><h2>Ether Units<a class="headerlink" href="#ether-units" title="Permalink to this headline">¶</a></h2>
+<p>A literal number can take a suffix of <code class="docutils literal"><span class="pre">wei</span></code>, <code class="docutils literal"><span class="pre">finney</span></code>, <code class="docutils literal"><span class="pre">szabo</span></code> or <code class="docutils literal"><span class="pre">ether</span></code> to convert between the subdenominations of Ether, where Ether currency numbers without a postfix are assumed to be Wei, e.g. <code class="docutils literal"><span class="pre">2</span> <span class="pre">ether</span> <span class="pre">==</span> <span class="pre">2000</span> <span class="pre">finney</span></code> evaluates to <code class="docutils literal"><span class="pre">true</span></code>.</p>
+</div>
+<div class="section" id="time-units">
+<span id="index-1"></span><h2>Time Units<a class="headerlink" href="#time-units" title="Permalink to this headline">¶</a></h2>
+<p>Suffixes like <code class="docutils literal"><span class="pre">seconds</span></code>, <code class="docutils literal"><span class="pre">minutes</span></code>, <code class="docutils literal"><span class="pre">hours</span></code>, <code class="docutils literal"><span class="pre">days</span></code>, <code class="docutils literal"><span class="pre">weeks</span></code> and
+<code class="docutils literal"><span class="pre">years</span></code> after literal numbers can be used to convert between units of time where seconds are the base
+unit and units are considered naively in the following way:</p>
+<blockquote>
+<div><ul class="simple">
+<li><code class="docutils literal"><span class="pre">1</span> <span class="pre">==</span> <span class="pre">1</span> <span class="pre">seconds</span></code></li>
+<li><code class="docutils literal"><span class="pre">1</span> <span class="pre">minutes</span> <span class="pre">==</span> <span class="pre">60</span> <span class="pre">seconds</span></code></li>
+<li><code class="docutils literal"><span class="pre">1</span> <span class="pre">hours</span> <span class="pre">==</span> <span class="pre">60</span> <span class="pre">minutes</span></code></li>
+<li><code class="docutils literal"><span class="pre">1</span> <span class="pre">days</span> <span class="pre">==</span> <span class="pre">24</span> <span class="pre">hours</span></code></li>
+<li><code class="docutils literal"><span class="pre">1</span> <span class="pre">weeks</span> <span class="pre">==</span> <span class="pre">7</span> <span class="pre">days</span></code></li>
+<li><code class="docutils literal"><span class="pre">1</span> <span class="pre">years</span> <span class="pre">==</span> <span class="pre">365</span> <span class="pre">days</span></code></li>
+</ul>
+</div></blockquote>
+<p>Take care if you perform calendar calculations using these units, because
+not every year equals 365 days and not even every day has 24 hours
+because of <a class="reference external" href="https://en.wikipedia.org/wiki/Leap_second">leap seconds</a>.
+Due to the fact that leap seconds cannot be predicted, an exact calendar
+library has to be updated by an external oracle.</p>
+<p>These suffixes cannot be applied to variables. If you want to
+interpret some input variable in e.g. days, you can do it in the following way:</p>
+<div class="highlight-Solidity"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">f</span><span class="p">(</span><span class="kt">uint</span> <span class="nx">start</span><span class="p">,</span> <span class="kt">uint</span> <span class="nx">daysAfter</span><span class="p">)</span> <span class="k">public</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">now</span> <span class="o">&gt;=</span> <span class="nx">start</span> <span class="o">+</span> <span class="nx">daysAfter</span> <span class="o">*</span> <span class="mi">1</span> <span class="kt">days</span><span class="p">)</span> <span class="p">{</span>
+      <span class="c1">// ...</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="special-variables-and-functions">
+<h2>Special Variables and Functions<a class="headerlink" href="#special-variables-and-functions" title="Permalink to this headline">¶</a></h2>
+<p>There are special variables and functions which always exist in the global
+namespace and are mainly used to provide information about the blockchain.</p>
+<div class="section" id="block-and-transaction-properties">
+<span id="index-2"></span><h3>Block and Transaction Properties<a class="headerlink" href="#block-and-transaction-properties" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">block.blockhash(uint</span> <span class="pre">blockNumber)</span> <span class="pre">returns</span> <span class="pre">(bytes32)</span></code>: hash of the given block - only works for 256 most recent blocks excluding current</li>
+<li><code class="docutils literal"><span class="pre">block.coinbase</span></code> (<code class="docutils literal"><span class="pre">address</span></code>): current block miner’s address</li>
+<li><code class="docutils literal"><span class="pre">block.difficulty</span></code> (<code class="docutils literal"><span class="pre">uint</span></code>): current block difficulty</li>
+<li><code class="docutils literal"><span class="pre">block.gaslimit</span></code> (<code class="docutils literal"><span class="pre">uint</span></code>): current block gaslimit</li>
+<li><code class="docutils literal"><span class="pre">block.number</span></code> (<code class="docutils literal"><span class="pre">uint</span></code>): current block number</li>
+<li><code class="docutils literal"><span class="pre">block.timestamp</span></code> (<code class="docutils literal"><span class="pre">uint</span></code>): current block timestamp as seconds since unix epoch</li>
+<li><code class="docutils literal"><span class="pre">msg.data</span></code> (<code class="docutils literal"><span class="pre">bytes</span></code>): complete calldata</li>
+<li><code class="docutils literal"><span class="pre">msg.gas</span></code> (<code class="docutils literal"><span class="pre">uint</span></code>): remaining gas</li>
+<li><code class="docutils literal"><span class="pre">msg.sender</span></code> (<code class="docutils literal"><span class="pre">address</span></code>): sender of the message (current call)</li>
+<li><code class="docutils literal"><span class="pre">msg.sig</span></code> (<code class="docutils literal"><span class="pre">bytes4</span></code>): first four bytes of the calldata (i.e. function identifier)</li>
+<li><code class="docutils literal"><span class="pre">msg.value</span></code> (<code class="docutils literal"><span class="pre">uint</span></code>): number of wei sent with the message</li>
+<li><code class="docutils literal"><span class="pre">now</span></code> (<code class="docutils literal"><span class="pre">uint</span></code>): current block timestamp (alias for <code class="docutils literal"><span class="pre">block.timestamp</span></code>)</li>
+<li><code class="docutils literal"><span class="pre">tx.gasprice</span></code> (<code class="docutils literal"><span class="pre">uint</span></code>): gas price of the transaction</li>
+<li><code class="docutils literal"><span class="pre">tx.origin</span></code> (<code class="docutils literal"><span class="pre">address</span></code>): sender of the transaction (full call chain)</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The values of all members of <code class="docutils literal"><span class="pre">msg</span></code>, including <code class="docutils literal"><span class="pre">msg.sender</span></code> and
+<code class="docutils literal"><span class="pre">msg.value</span></code> can change for every <strong>external</strong> function call.
+This includes calls to library functions.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>Do not rely on <code class="docutils literal"><span class="pre">block.timestamp</span></code>, <code class="docutils literal"><span class="pre">now</span></code> and <code class="docutils literal"><span class="pre">block.blockhash</span></code> as a source of randomness,
+unless you know what you are doing.</p>
+<p>Both the timestamp and the block hash can be influenced by miners to some degree.
+Bad actors in the mining community can for example run a casino payout function on a chosen hash
+and just retry a different hash if they did not receive any money.</p>
+<p class="last">The current block timestamp must be strictly larger than the timestamp of the last block,
+but the only guarantee is that it will be somewhere between the timestamps of two
+consecutive blocks in the canonical chain.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The block hashes are not available for all blocks for scalability reasons.
+You can only access the hashes of the most recent 256 blocks, all other
+values will be zero.</p>
+</div>
+</div>
+<div class="section" id="error-handling">
+<span id="index-3"></span><h3>Error Handling<a class="headerlink" href="#error-handling" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><code class="docutils literal"><span class="pre">assert(bool</span> <span class="pre">condition)</span></code>:</dt>
+<dd>throws if the condition is not met - to be used for internal errors.</dd>
+<dt><code class="docutils literal"><span class="pre">require(bool</span> <span class="pre">condition)</span></code>:</dt>
+<dd>throws if the condition is not met - to be used for errors in inputs or external components.</dd>
+<dt><code class="docutils literal"><span class="pre">revert()</span></code>:</dt>
+<dd>abort execution and revert state changes</dd>
+</dl>
+</div>
+<div class="section" id="mathematical-and-cryptographic-functions">
+<span id="index-4"></span><h3>Mathematical and Cryptographic Functions<a class="headerlink" href="#mathematical-and-cryptographic-functions" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><code class="docutils literal"><span class="pre">addmod(uint</span> <span class="pre">x,</span> <span class="pre">uint</span> <span class="pre">y,</span> <span class="pre">uint</span> <span class="pre">k)</span> <span class="pre">returns</span> <span class="pre">(uint)</span></code>:</dt>
+<dd>compute <code class="docutils literal"><span class="pre">(x</span> <span class="pre">+</span> <span class="pre">y)</span> <span class="pre">%</span> <span class="pre">k</span></code> where the addition is performed with arbitrary precision and does not wrap around at <code class="docutils literal"><span class="pre">2**256</span></code>.</dd>
+<dt><code class="docutils literal"><span class="pre">mulmod(uint</span> <span class="pre">x,</span> <span class="pre">uint</span> <span class="pre">y,</span> <span class="pre">uint</span> <span class="pre">k)</span> <span class="pre">returns</span> <span class="pre">(uint)</span></code>:</dt>
+<dd>compute <code class="docutils literal"><span class="pre">(x</span> <span class="pre">*</span> <span class="pre">y)</span> <span class="pre">%</span> <span class="pre">k</span></code> where the multiplication is performed with arbitrary precision and does not wrap around at <code class="docutils literal"><span class="pre">2**256</span></code>.</dd>
+<dt><code class="docutils literal"><span class="pre">keccak256(...)</span> <span class="pre">returns</span> <span class="pre">(bytes32)</span></code>:</dt>
+<dd>compute the Ethereum-SHA-3 (Keccak-256) hash of the <a class="reference internal" href="abi-spec.html#abi-packed-mode"><span class="std std-ref">(tightly packed) arguments</span></a></dd>
+<dt><code class="docutils literal"><span class="pre">sha256(...)</span> <span class="pre">returns</span> <span class="pre">(bytes32)</span></code>:</dt>
+<dd>compute the SHA-256 hash of the <a class="reference internal" href="abi-spec.html#abi-packed-mode"><span class="std std-ref">(tightly packed) arguments</span></a></dd>
+<dt><code class="docutils literal"><span class="pre">sha3(...)</span> <span class="pre">returns</span> <span class="pre">(bytes32)</span></code>:</dt>
+<dd>alias to <code class="docutils literal"><span class="pre">keccak256</span></code></dd>
+<dt><code class="docutils literal"><span class="pre">ripemd160(...)</span> <span class="pre">returns</span> <span class="pre">(bytes20)</span></code>:</dt>
+<dd>compute RIPEMD-160 hash of the <a class="reference internal" href="abi-spec.html#abi-packed-mode"><span class="std std-ref">(tightly packed) arguments</span></a></dd>
+<dt><code class="docutils literal"><span class="pre">ecrecover(bytes32</span> <span class="pre">hash,</span> <span class="pre">uint8</span> <span class="pre">v,</span> <span class="pre">bytes32</span> <span class="pre">r,</span> <span class="pre">bytes32</span> <span class="pre">s)</span> <span class="pre">returns</span> <span class="pre">(address)</span></code>:</dt>
+<dd>recover the address associated with the public key from elliptic curve signature or return zero on error
+(<a class="reference external" href="https://ethereum.stackexchange.com/q/1777/222">example usage</a>)</dd>
+</dl>
+<p>In the above, “tightly packed” means that the arguments are concatenated without padding.
+This means that the following are all identical:</p>
+<div class="highlight-Solidity"><div class="highlight"><pre><span></span><span class="nb">keccak256</span><span class="p">(</span><span class="s2">&quot;ab&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">)</span>
+<span class="nb">keccak256</span><span class="p">(</span><span class="s2">&quot;abc&quot;</span><span class="p">)</span>
+<span class="nb">keccak256</span><span class="p">(</span><span class="mh">0x616263</span><span class="p">)</span>
+<span class="nb">keccak256</span><span class="p">(</span><span class="mi">6382179</span><span class="p">)</span>
+<span class="nb">keccak256</span><span class="p">(</span><span class="mi">97</span><span class="p">,</span> <span class="mi">98</span><span class="p">,</span> <span class="mi">99</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If padding is needed, explicit type conversions can be used: <code class="docutils literal"><span class="pre">keccak256(&quot;\x00\x12&quot;)</span></code> is the
+same as <code class="docutils literal"><span class="pre">keccak256(uint16(0x12))</span></code>.</p>
+<p>Note that constants will be packed using the minimum number of bytes required to store them.
+This means that, for example, <code class="docutils literal"><span class="pre">keccak256(0)</span> <span class="pre">==</span> <span class="pre">keccak256(uint8(0))</span></code> and
+<code class="docutils literal"><span class="pre">keccak256(0x12345678)</span> <span class="pre">==</span> <span class="pre">keccak256(uint32(0x12345678))</span></code>.</p>
+<p>It might be that you run into Out-of-Gas for <code class="docutils literal"><span class="pre">sha256</span></code>, <code class="docutils literal"><span class="pre">ripemd160</span></code> or <code class="docutils literal"><span class="pre">ecrecover</span></code> on a <em>private blockchain</em>. The reason for this is that those are implemented as so-called precompiled contracts and these contracts only really exist after they received the first message (although their contract code is hardcoded). Messages to non-existing contracts are more expensive and thus the execution runs into an Out-of-Gas error. A workaround for this problem is to first send e.g. 1 Wei to each of the contracts before you use them in your actual contracts. This is not an issue on the official or test net.</p>
+</div>
+<div class="section" id="address-related">
+<span id="index-5"></span><span id="id1"></span><h3>Address Related<a class="headerlink" href="#address-related" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><code class="docutils literal"><span class="pre">&lt;address&gt;.balance</span></code> (<code class="docutils literal"><span class="pre">uint256</span></code>):</dt>
+<dd>balance of the <a class="reference internal" href="types.html#address"><span class="std std-ref">Address</span></a> in Wei</dd>
+<dt><code class="docutils literal"><span class="pre">&lt;address&gt;.transfer(uint256</span> <span class="pre">amount)</span></code>:</dt>
+<dd>send given amount of Wei to <a class="reference internal" href="types.html#address"><span class="std std-ref">Address</span></a>, throws on failure</dd>
+<dt><code class="docutils literal"><span class="pre">&lt;address&gt;.send(uint256</span> <span class="pre">amount)</span> <span class="pre">returns</span> <span class="pre">(bool)</span></code>:</dt>
+<dd>send given amount of Wei to <a class="reference internal" href="types.html#address"><span class="std std-ref">Address</span></a>, returns <code class="docutils literal"><span class="pre">false</span></code> on failure</dd>
+<dt><code class="docutils literal"><span class="pre">&lt;address&gt;.call(...)</span> <span class="pre">returns</span> <span class="pre">(bool)</span></code>:</dt>
+<dd>issue low-level <code class="docutils literal"><span class="pre">CALL</span></code>, returns <code class="docutils literal"><span class="pre">false</span></code> on failure</dd>
+<dt><code class="docutils literal"><span class="pre">&lt;address&gt;.callcode(...)</span> <span class="pre">returns</span> <span class="pre">(bool)</span></code>:</dt>
+<dd>issue low-level <code class="docutils literal"><span class="pre">CALLCODE</span></code>, returns <code class="docutils literal"><span class="pre">false</span></code> on failure</dd>
+<dt><code class="docutils literal"><span class="pre">&lt;address&gt;.delegatecall(...)</span> <span class="pre">returns</span> <span class="pre">(bool)</span></code>:</dt>
+<dd>issue low-level <code class="docutils literal"><span class="pre">DELEGATECALL</span></code>, returns <code class="docutils literal"><span class="pre">false</span></code> on failure</dd>
+</dl>
+<p>For more information, see the section on <a class="reference internal" href="types.html#address"><span class="std std-ref">Address</span></a>.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">There are some dangers in using <code class="docutils literal"><span class="pre">send</span></code>: The transfer fails if the call stack depth is at 1024
+(this can always be forced by the caller) and it also fails if the recipient runs out of gas. So in order
+to make safe Ether transfers, always check the return value of <code class="docutils literal"><span class="pre">send</span></code>, use <code class="docutils literal"><span class="pre">transfer</span></code> or even better:
+Use a pattern where the recipient withdraws the money.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The use of <code class="docutils literal"><span class="pre">callcode</span></code> is discouraged and will be removed in the future.</p>
+</div>
+</div>
+<div class="section" id="contract-related">
+<span id="index-6"></span><h3>Contract Related<a class="headerlink" href="#contract-related" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><code class="docutils literal"><span class="pre">this</span></code> (current contract’s type):</dt>
+<dd>the current contract, explicitly convertible to <a class="reference internal" href="types.html#address"><span class="std std-ref">Address</span></a></dd>
+<dt><code class="docutils literal"><span class="pre">selfdestruct(address</span> <span class="pre">recipient)</span></code>:</dt>
+<dd>destroy the current contract, sending its funds to the given <a class="reference internal" href="types.html#address"><span class="std std-ref">Address</span></a></dd>
+<dt><code class="docutils literal"><span class="pre">suicide(address</span> <span class="pre">recipient)</span></code>:</dt>
+<dd>alias to <code class="docutils literal"><span class="pre">selfdestruct</span></code></dd>
+</dl>
+<p>Furthermore, all functions of the current contract are callable directly including the current function.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Units and Globally Available Variables</a><ul>
+<li><a class="reference internal" href="#ether-units">Ether Units</a></li>
+<li><a class="reference internal" href="#time-units">Time Units</a></li>
+<li><a class="reference internal" href="#special-variables-and-functions">Special Variables and Functions</a><ul>
+<li><a class="reference internal" href="#block-and-transaction-properties">Block and Transaction Properties</a></li>
+<li><a class="reference internal" href="#error-handling">Error Handling</a></li>
+<li><a class="reference internal" href="#mathematical-and-cryptographic-functions">Mathematical and Cryptographic Functions</a></li>
+<li><a class="reference internal" href="#address-related">Address Related</a></li>
+<li><a class="reference internal" href="#contract-related">Contract Related</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="solidity-in-depth.html">Solidity in Depth</a><ul>
+      <li>Previous: <a href="types.html" title="previous chapter">Types</a></li>
+      <li>Next: <a href="control-structures.html" title="next chapter">Expressions and Control Structures</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/units-and-global-variables.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016-2017, Ethereum.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/units-and-global-variables.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,665 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Frequently Asked Questions &#8212; Solidity 0.4.20 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.4.20',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Contributing" href="contributing.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="frequently-asked-questions">
+<h1>Frequently Asked Questions<a class="headerlink" href="#frequently-asked-questions" title="Permalink to this headline">¶</a></h1>
+<p>This list was originally compiled by <a class="reference external" href="mailto:fivedogit&#37;&#52;&#48;gmail&#46;com">fivedogit</a>.</p>
+<div class="section" id="basic-questions">
+<h2>Basic Questions<a class="headerlink" href="#basic-questions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="example-contracts">
+<h3>Example contracts<a class="headerlink" href="#example-contracts" title="Permalink to this headline">¶</a></h3>
+<p>There are some <a class="reference external" href="https://github.com/fivedogit/solidity-baby-steps/tree/master/contracts/">contract examples</a> by fivedogit and
+there should be a <a class="reference external" href="https://github.com/ethereum/solidity/blob/develop/test/libsolidity/SolidityEndToEndTest.cpp">test contract</a> for every single feature of Solidity.</p>
+</div>
+<div class="section" id="create-and-publish-the-most-basic-contract-possible">
+<h3>Create and publish the most basic contract possible<a class="headerlink" href="#create-and-publish-the-most-basic-contract-possible" title="Permalink to this headline">¶</a></h3>
+<p>A quite simple contract is the <a class="reference external" href="https://github.com/fivedogit/solidity-baby-steps/blob/master/contracts/05_greeter.sol">greeter</a></p>
+</div>
+<div class="section" id="is-it-possible-to-do-something-on-a-specific-block-number-e-g-publish-a-contract-or-execute-a-transaction">
+<h3>Is it possible to do something on a specific block number? (e.g. publish a contract or execute a transaction)<a class="headerlink" href="#is-it-possible-to-do-something-on-a-specific-block-number-e-g-publish-a-contract-or-execute-a-transaction" title="Permalink to this headline">¶</a></h3>
+<p>Transactions are not guaranteed to happen on the next block or any future
+specific block, since it is up to the miners to include transactions and not up
+to the submitter of the transaction. This applies to function calls/transactions and contract
+creation transactions.</p>
+<p>If you want to schedule future calls of your contract, you can use the
+<a class="reference external" href="http://www.ethereum-alarm-clock.com/">alarm clock</a>.</p>
+</div>
+<div class="section" id="what-is-the-transaction-payload">
+<h3>What is the transaction “payload”?<a class="headerlink" href="#what-is-the-transaction-payload" title="Permalink to this headline">¶</a></h3>
+<p>This is just the bytecode “data” sent along with the request.</p>
+</div>
+<div class="section" id="is-there-a-decompiler-available">
+<h3>Is there a decompiler available?<a class="headerlink" href="#is-there-a-decompiler-available" title="Permalink to this headline">¶</a></h3>
+<p>There is no exact decompiler to Solidity, but
+<a class="reference external" href="https://github.com/comaeio/porosity">Porosity</a> is close.
+Because some information like variable names, comments, and
+source code formatting is lost in the compilation process,
+it is not possible to completely recover the original source code.</p>
+<p>Bytecode can be disassembled to opcodes, a service that is provided by
+several blockchain explorers.</p>
+<p>Contracts on the blockchain should have their original source
+code published if they are to be used by third parties.</p>
+</div>
+<div class="section" id="create-a-contract-that-can-be-killed-and-return-funds">
+<h3>Create a contract that can be killed and return funds<a class="headerlink" href="#create-a-contract-that-can-be-killed-and-return-funds" title="Permalink to this headline">¶</a></h3>
+<p>First, a word of warning: Killing contracts sounds like a good idea, because “cleaning up”
+is always good, but as seen above, it does not really clean up. Furthermore,
+if Ether is sent to removed contracts, the Ether will be forever lost.</p>
+<p>If you want to deactivate your contracts, it is preferable to <strong>disable</strong> them by changing some
+internal state which causes all functions to throw. This will make it impossible
+to use the contract and ether sent to the contract will be returned automatically.</p>
+<p>Now to answering the question: Inside a constructor, <code class="docutils literal"><span class="pre">msg.sender</span></code> is the
+creator. Save it. Then <code class="docutils literal"><span class="pre">selfdestruct(creator);</span></code> to kill and return funds.</p>
+<p><a class="reference external" href="https://github.com/fivedogit/solidity-baby-steps/blob/master/contracts/05_greeter.sol">example</a></p>
+<p>Note that if you <code class="docutils literal"><span class="pre">import</span> <span class="pre">&quot;mortal&quot;</span></code> at the top of your contracts and declare
+<code class="docutils literal"><span class="pre">contract</span> <span class="pre">SomeContract</span> <span class="pre">is</span> <span class="pre">mortal</span> <span class="pre">{</span> <span class="pre">...</span></code> and compile with a compiler that already
+has it (which includes <a class="reference external" href="https://remix.ethereum.org/">Remix</a>), then
+<code class="docutils literal"><span class="pre">kill()</span></code> is taken care of for you. Once a contract is “mortal”, then you can
+<code class="docutils literal"><span class="pre">contractname.kill.sendTransaction({from:eth.coinbase})</span></code>, just the same as my
+examples.</p>
+</div>
+<div class="section" id="store-ether-in-a-contract">
+<h3>Store Ether in a contract<a class="headerlink" href="#store-ether-in-a-contract" title="Permalink to this headline">¶</a></h3>
+<p>The trick is to create the contract with <code class="docutils literal"><span class="pre">{from:someaddress,</span> <span class="pre">value:</span> <span class="pre">web3.toWei(3,&quot;ether&quot;)...}</span></code></p>
+<p>See <a class="reference external" href="https://github.com/fivedogit/solidity-baby-steps/blob/master/contracts/30_endowment_retriever.sol">endowment_retriever.sol</a>.</p>
+</div>
+<div class="section" id="use-a-non-constant-function-req-sendtransaction-to-increment-a-variable-in-a-contract">
+<h3>Use a non-constant function (req <code class="docutils literal"><span class="pre">sendTransaction</span></code>) to increment a variable in a contract<a class="headerlink" href="#use-a-non-constant-function-req-sendtransaction-to-increment-a-variable-in-a-contract" title="Permalink to this headline">¶</a></h3>
+<p>See <a class="reference external" href="https://github.com/fivedogit/solidity-baby-steps/blob/master/contracts/20_value_incrementer.sol">value_incrementer.sol</a>.</p>
+</div>
+<div class="section" id="get-a-contract-to-return-its-funds-to-you-not-using-selfdestruct">
+<h3>Get a contract to return its funds to you (not using <code class="docutils literal"><span class="pre">selfdestruct(...)</span></code>).<a class="headerlink" href="#get-a-contract-to-return-its-funds-to-you-not-using-selfdestruct" title="Permalink to this headline">¶</a></h3>
+<p>This example demonstrates how to send funds from a contract to an address.</p>
+<p>See <a class="reference external" href="https://github.com/fivedogit/solidity-baby-steps/blob/master/contracts/30_endowment_retriever.sol">endowment_retriever</a>.</p>
+</div>
+<div class="section" id="can-you-return-an-array-or-a-string-from-a-solidity-function-call">
+<h3>Can you return an array or a <code class="docutils literal"><span class="pre">string</span></code> from a solidity function call?<a class="headerlink" href="#can-you-return-an-array-or-a-string-from-a-solidity-function-call" title="Permalink to this headline">¶</a></h3>
+<p>Yes. See <a class="reference external" href="https://github.com/fivedogit/solidity-baby-steps/blob/master/contracts/60_array_receiver_and_returner.sol">array_receiver_and_returner.sol</a>.</p>
+<p>What is problematic, though, is returning any variably-sized data (e.g. a
+variably-sized array like <code class="docutils literal"><span class="pre">uint[]</span></code>) from a fuction <strong>called from within Solidity</strong>.
+This is a limitation of the EVM and will be solved with the next protocol update.</p>
+<p>Returning variably-sized data as part of an external transaction or call is fine.</p>
+</div>
+<div class="section" id="is-it-possible-to-in-line-initialize-an-array-like-so-string-myarray-a-b">
+<h3>Is it possible to in-line initialize an array like so: <code class="docutils literal"><span class="pre">string[]</span> <span class="pre">myarray</span> <span class="pre">=</span> <span class="pre">[&quot;a&quot;,</span> <span class="pre">&quot;b&quot;];</span></code><a class="headerlink" href="#is-it-possible-to-in-line-initialize-an-array-like-so-string-myarray-a-b" title="Permalink to this headline">¶</a></h3>
+<p>Yes. However it should be noted that this currently only works with statically sized memory arrays. You can even create an inline memory
+array in the return statement. Pretty cool, huh?</p>
+<p>Example:</p>
+<div class="highlight-Solidity"><div class="highlight"><pre><span></span><span class="k">pragma</span> <span class="nx">solidity</span> <span class="o">^</span><span class="mf">0.4</span><span class="p">.</span><span class="mi">16</span><span class="p">;</span>
+
+<span class="kd">contract</span> <span class="nx">C</span> <span class="p">{</span>
+    <span class="kd">function</span> <span class="nx">f</span><span class="p">()</span> <span class="k">public</span> <span class="k">pure</span> <span class="k">returns</span> <span class="p">(</span><span class="kt">uint8</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span> <span class="p">{</span>
+        <span class="kt">string</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="k">memory</span> <span class="nx">adaArr</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;This&quot;</span><span class="p">,</span> <span class="s2">&quot;is&quot;</span><span class="p">,</span> <span class="s2">&quot;an&quot;</span><span class="p">,</span> <span class="s2">&quot;array&quot;</span><span class="p">];</span>
+        <span class="k">return</span> <span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="can-a-contract-function-return-a-struct">
+<h3>Can a contract function return a <code class="docutils literal"><span class="pre">struct</span></code>?<a class="headerlink" href="#can-a-contract-function-return-a-struct" title="Permalink to this headline">¶</a></h3>
+<p>Yes, but only in <code class="docutils literal"><span class="pre">internal</span></code> function calls.</p>
+</div>
+<div class="section" id="if-i-return-an-enum-i-only-get-integer-values-in-web3-js-how-to-get-the-named-values">
+<h3>If I return an <code class="docutils literal"><span class="pre">enum</span></code>, I only get integer values in web3.js. How to get the named values?<a class="headerlink" href="#if-i-return-an-enum-i-only-get-integer-values-in-web3-js-how-to-get-the-named-values" title="Permalink to this headline">¶</a></h3>
+<p>Enums are not supported by the ABI, they are just supported by Solidity.
+You have to do the mapping yourself for now, we might provide some help
+later.</p>
+</div>
+<div class="section" id="can-state-variables-be-initialized-in-line">
+<h3>Can state variables be initialized in-line?<a class="headerlink" href="#can-state-variables-be-initialized-in-line" title="Permalink to this headline">¶</a></h3>
+<p>Yes, this is possible for all types (even for structs). However, for arrays it
+should be noted that you must declare them as static memory arrays.</p>
+<p>Examples:</p>
+<div class="highlight-Solidity"><div class="highlight"><pre><span></span><span class="k">pragma</span> <span class="nx">solidity</span> <span class="o">^</span><span class="mf">0.4</span><span class="p">.</span><span class="mi">0</span><span class="p">;</span>
+
+<span class="kd">contract</span> <span class="nx">C</span> <span class="p">{</span>
+    <span class="kd">struct</span> <span class="nx">S</span> <span class="p">{</span>
+        <span class="kt">uint</span> <span class="nx">a</span><span class="p">;</span>
+        <span class="kt">uint</span> <span class="nx">b</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nx">S</span> <span class="k">public</span> <span class="nx">x</span> <span class="o">=</span> <span class="nx">S</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+    <span class="kt">string</span> <span class="nx">name</span> <span class="o">=</span> <span class="s2">&quot;Ada&quot;</span><span class="p">;</span>
+    <span class="kt">string</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="nx">adaArr</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;This&quot;</span><span class="p">,</span> <span class="s2">&quot;is&quot;</span><span class="p">,</span> <span class="s2">&quot;an&quot;</span><span class="p">,</span> <span class="s2">&quot;array&quot;</span><span class="p">];</span>
+<span class="p">}</span>
+
+<span class="kd">contract</span> <span class="nx">D</span> <span class="p">{</span>
+    <span class="nx">C</span> <span class="nx">c</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">C</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="how-do-structs-work">
+<h3>How do structs work?<a class="headerlink" href="#how-do-structs-work" title="Permalink to this headline">¶</a></h3>
+<p>See <a class="reference external" href="https://github.com/fivedogit/solidity-baby-steps/blob/master/contracts/65_struct_and_for_loop_tester.sol">struct_and_for_loop_tester.sol</a>.</p>
+</div>
+<div class="section" id="how-do-for-loops-work">
+<h3>How do for loops work?<a class="headerlink" href="#how-do-for-loops-work" title="Permalink to this headline">¶</a></h3>
+<p>Very similar to JavaScript. There is one point to watch out for, though:</p>
+<p>If you use <code class="docutils literal"><span class="pre">for</span> <span class="pre">(var</span> <span class="pre">i</span> <span class="pre">=</span> <span class="pre">0;</span> <span class="pre">i</span> <span class="pre">&lt;</span> <span class="pre">a.length;</span> <span class="pre">i</span> <span class="pre">++)</span> <span class="pre">{</span> <span class="pre">a[i]</span> <span class="pre">=</span> <span class="pre">i;</span> <span class="pre">}</span></code>, then
+the type of <code class="docutils literal"><span class="pre">i</span></code> will be inferred only from <code class="docutils literal"><span class="pre">0</span></code>, whose type is <code class="docutils literal"><span class="pre">uint8</span></code>.
+This means that if <code class="docutils literal"><span class="pre">a</span></code> has more than <code class="docutils literal"><span class="pre">255</span></code> elements, your loop will
+not terminate because <code class="docutils literal"><span class="pre">i</span></code> can only hold values up to <code class="docutils literal"><span class="pre">255</span></code>.</p>
+<p>Better use <code class="docutils literal"><span class="pre">for</span> <span class="pre">(uint</span> <span class="pre">i</span> <span class="pre">=</span> <span class="pre">0;</span> <span class="pre">i</span> <span class="pre">&lt;</span> <span class="pre">a.length...</span></code></p>
+<p>See <a class="reference external" href="https://github.com/fivedogit/solidity-baby-steps/blob/master/contracts/65_struct_and_for_loop_tester.sol">struct_and_for_loop_tester.sol</a>.</p>
+</div>
+<div class="section" id="what-are-some-examples-of-basic-string-manipulation-substring-indexof-charat-etc">
+<h3>What are some examples of basic string manipulation (<code class="docutils literal"><span class="pre">substring</span></code>, <code class="docutils literal"><span class="pre">indexOf</span></code>, <code class="docutils literal"><span class="pre">charAt</span></code>, etc)?<a class="headerlink" href="#what-are-some-examples-of-basic-string-manipulation-substring-indexof-charat-etc" title="Permalink to this headline">¶</a></h3>
+<p>There are some string utility functions at <a class="reference external" href="https://github.com/ethereum/dapp-bin/blob/master/library/stringUtils.sol">stringUtils.sol</a>
+which will be extended in the future. In addition, Arachnid has written <a class="reference external" href="https://github.com/Arachnid/solidity-stringutils">solidity-stringutils</a>.</p>
+<p>For now, if you want to modify a string (even when you only want to know its length),
+you should always convert it to a <code class="docutils literal"><span class="pre">bytes</span></code> first:</p>
+<div class="highlight-Solidity"><div class="highlight"><pre><span></span><span class="k">pragma</span> <span class="nx">solidity</span> <span class="o">^</span><span class="mf">0.4</span><span class="p">.</span><span class="mi">0</span><span class="p">;</span>
+
+<span class="kd">contract</span> <span class="nx">C</span> <span class="p">{</span>
+    <span class="kt">string</span> <span class="nx">s</span><span class="p">;</span>
+
+    <span class="kd">function</span> <span class="nx">append</span><span class="p">(</span><span class="kt">byte</span> <span class="nx">c</span><span class="p">)</span> <span class="k">public</span> <span class="p">{</span>
+        <span class="kt">bytes</span><span class="p">(</span><span class="nx">s</span><span class="p">).</span><span class="nx">push</span><span class="p">(</span><span class="nx">c</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="kd">function</span> <span class="nx">set</span><span class="p">(</span><span class="kt">uint</span> <span class="nx">i</span><span class="p">,</span> <span class="kt">byte</span> <span class="nx">c</span><span class="p">)</span> <span class="k">public</span> <span class="p">{</span>
+        <span class="kt">bytes</span><span class="p">(</span><span class="nx">s</span><span class="p">)[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">c</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="can-i-concatenate-two-strings">
+<h3>Can I concatenate two strings?<a class="headerlink" href="#can-i-concatenate-two-strings" title="Permalink to this headline">¶</a></h3>
+<p>You have to do it manually for now.</p>
+</div>
+<div class="section" id="why-is-the-low-level-function-call-less-favorable-than-instantiating-a-contract-with-a-variable-contractb-b-and-executing-its-functions-b-dosomething">
+<h3>Why is the low-level function <code class="docutils literal"><span class="pre">.call()</span></code> less favorable than instantiating a contract with a variable (<code class="docutils literal"><span class="pre">ContractB</span> <span class="pre">b;</span></code>) and executing its functions (<code class="docutils literal"><span class="pre">b.doSomething();</span></code>)?<a class="headerlink" href="#why-is-the-low-level-function-call-less-favorable-than-instantiating-a-contract-with-a-variable-contractb-b-and-executing-its-functions-b-dosomething" title="Permalink to this headline">¶</a></h3>
+<p>If you use actual functions, the compiler will tell you if the types
+or your arguments do not match, if the function does not exist
+or is not visible and it will do the packing of the
+arguments for you.</p>
+<p>See <a class="reference external" href="https://github.com/fivedogit/solidity-baby-steps/blob/master/contracts/45_ping.sol">ping.sol</a> and
+<a class="reference external" href="https://github.com/fivedogit/solidity-baby-steps/blob/master/contracts/45_pong.sol">pong.sol</a>.</p>
+</div>
+<div class="section" id="is-unused-gas-automatically-refunded">
+<h3>Is unused gas automatically refunded?<a class="headerlink" href="#is-unused-gas-automatically-refunded" title="Permalink to this headline">¶</a></h3>
+<p>Yes and it is immediate, i.e. done as part of the transaction.</p>
+</div>
+<div class="section" id="when-returning-a-value-of-say-uint-type-is-it-possible-to-return-an-undefined-or-null-like-value">
+<h3>When returning a value of say <code class="docutils literal"><span class="pre">uint</span></code> type, is it possible to return an <code class="docutils literal"><span class="pre">undefined</span></code> or “null”-like value?<a class="headerlink" href="#when-returning-a-value-of-say-uint-type-is-it-possible-to-return-an-undefined-or-null-like-value" title="Permalink to this headline">¶</a></h3>
+<p>This is not possible, because all types use up the full value range.</p>
+<p>You have the option to <code class="docutils literal"><span class="pre">throw</span></code> on error, which will also revert the whole
+transaction, which might be a good idea if you ran into an unexpected
+situation.</p>
+<p>If you do not want to throw, you can return a pair:</p>
+<div class="highlight-Solidity"><div class="highlight"><pre><span></span><span class="k">pragma</span> <span class="nx">solidity</span> <span class="o">^</span><span class="mf">0.4</span><span class="p">.</span><span class="mi">16</span><span class="p">;</span>
+
+<span class="kd">contract</span> <span class="nx">C</span> <span class="p">{</span>
+    <span class="kt">uint</span><span class="p">[]</span> <span class="nx">counters</span><span class="p">;</span>
+
+    <span class="kd">function</span> <span class="nx">getCounter</span><span class="p">(</span><span class="kt">uint</span> <span class="nx">index</span><span class="p">)</span>
+        <span class="k">public</span>
+        <span class="k">view</span>
+        <span class="k">returns</span> <span class="p">(</span><span class="kt">uint</span> <span class="nx">counter</span><span class="p">,</span> <span class="kt">bool</span> <span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">index</span> <span class="o">&gt;=</span> <span class="nx">counters</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span>
+                <span class="k">return</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+            <span class="k">else</span>
+                <span class="k">return</span> <span class="p">(</span><span class="nx">counters</span><span class="p">[</span><span class="nx">index</span><span class="p">],</span> <span class="kc">false</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="kd">function</span> <span class="nx">checkCounter</span><span class="p">(</span><span class="kt">uint</span> <span class="nx">index</span><span class="p">)</span> <span class="k">public</span> <span class="k">view</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="p">(</span><span class="nx">counter</span><span class="p">,</span> <span class="nx">error</span><span class="p">)</span> <span class="o">=</span> <span class="nx">getCounter</span><span class="p">(</span><span class="nx">index</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// ...</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="c1">// ...</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="are-comments-included-with-deployed-contracts-and-do-they-increase-deployment-gas">
+<h3>Are comments included with deployed contracts and do they increase deployment gas?<a class="headerlink" href="#are-comments-included-with-deployed-contracts-and-do-they-increase-deployment-gas" title="Permalink to this headline">¶</a></h3>
+<p>No, everything that is not needed for execution is removed during compilation.
+This includes, among others, comments, variable names and type names.</p>
+</div>
+<div class="section" id="what-happens-if-you-send-ether-along-with-a-function-call-to-a-contract">
+<h3>What happens if you send ether along with a function call to a contract?<a class="headerlink" href="#what-happens-if-you-send-ether-along-with-a-function-call-to-a-contract" title="Permalink to this headline">¶</a></h3>
+<p>It gets added to the total balance of the contract, just like when you send ether when creating a contract.
+You can only send ether along to a function that has the <code class="docutils literal"><span class="pre">payable</span></code> modifier,
+otherwise an exception is thrown.</p>
+</div>
+<div class="section" id="is-it-possible-to-get-a-tx-receipt-for-a-transaction-executed-contract-to-contract">
+<h3>Is it possible to get a tx receipt for a transaction executed contract-to-contract?<a class="headerlink" href="#is-it-possible-to-get-a-tx-receipt-for-a-transaction-executed-contract-to-contract" title="Permalink to this headline">¶</a></h3>
+<p>No, a function call from one contract to another does not create its own transaction,
+you have to look in the overall transaction. This is also the reason why several
+block explorer do not show Ether sent between contracts correctly.</p>
+</div>
+<div class="section" id="what-is-the-memory-keyword-what-does-it-do">
+<h3>What is the <code class="docutils literal"><span class="pre">memory</span></code> keyword? What does it do?<a class="headerlink" href="#what-is-the-memory-keyword-what-does-it-do" title="Permalink to this headline">¶</a></h3>
+<p>The Ethereum Virtual Machine has three areas where it can store items.</p>
+<p>The first is “storage”, where all the contract state variables reside.
+Every contract has its own storage and it is persistent between function calls
+and quite expensive to use.</p>
+<p>The second is “memory”, this is used to hold temporary values. It
+is erased between (external) function calls and is cheaper to use.</p>
+<p>The third one is the stack, which is used to hold small local variables.
+It is almost free to use, but can only hold a limited amount of values.</p>
+<p>For almost all types, you cannot specify where they should be stored, because
+they are copied everytime they are used.</p>
+<p>The types where the so-called storage location is important are structs
+and arrays. If you e.g. pass such variables in function calls, their
+data is not copied if it can stay in memory or stay in storage.
+This means that you can modify their content in the called function
+and these modifications will still be visible in the caller.</p>
+<p>There are defaults for the storage location depending on which type
+of variable it concerns:</p>
+<ul class="simple">
+<li>state variables are always in storage</li>
+<li>function arguments are in memory by default</li>
+<li>local variables of struct, array or mapping type reference storage by default</li>
+<li>local variables of value type (i.e. neither array, nor struct nor mapping) are stored in the stack</li>
+</ul>
+<p>Example:</p>
+<div class="highlight-Solidity"><div class="highlight"><pre><span></span><span class="k">pragma</span> <span class="nx">solidity</span> <span class="o">^</span><span class="mf">0.4</span><span class="p">.</span><span class="mi">0</span><span class="p">;</span>
+
+<span class="kd">contract</span> <span class="nx">C</span> <span class="p">{</span>
+    <span class="kt">uint</span><span class="p">[]</span> <span class="nx">data1</span><span class="p">;</span>
+    <span class="kt">uint</span><span class="p">[]</span> <span class="nx">data2</span><span class="p">;</span>
+
+    <span class="kd">function</span> <span class="nx">appendOne</span><span class="p">()</span> <span class="k">public</span> <span class="p">{</span>
+        <span class="nx">append</span><span class="p">(</span><span class="nx">data1</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="kd">function</span> <span class="nx">appendTwo</span><span class="p">()</span> <span class="k">public</span> <span class="p">{</span>
+        <span class="nx">append</span><span class="p">(</span><span class="nx">data2</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="kd">function</span> <span class="nx">append</span><span class="p">(</span><span class="kt">uint</span><span class="p">[]</span> <span class="k">storage</span> <span class="nx">d</span><span class="p">)</span> <span class="k">internal</span> <span class="p">{</span>
+        <span class="nx">d</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The function <code class="docutils literal"><span class="pre">append</span></code> can work both on <code class="docutils literal"><span class="pre">data1</span></code> and <code class="docutils literal"><span class="pre">data2</span></code> and its modifications will be
+stored permanently. If you remove the <code class="docutils literal"><span class="pre">storage</span></code> keyword, the default
+is to use <code class="docutils literal"><span class="pre">memory</span></code> for function arguments. This has the effect that
+at the point where <code class="docutils literal"><span class="pre">append(data1)</span></code> or <code class="docutils literal"><span class="pre">append(data2)</span></code> is called, an
+independent copy of the state variable is created in memory and
+<code class="docutils literal"><span class="pre">append</span></code> operates on this copy (which does not support <code class="docutils literal"><span class="pre">.push</span></code> - but that
+is another issue). The modifications to this independent copy do not
+carry back to <code class="docutils literal"><span class="pre">data1</span></code> or <code class="docutils literal"><span class="pre">data2</span></code>.</p>
+<p>A common mistake is to declare a local variable and assume that it will
+be created in memory, although it will be created in storage:</p>
+<div class="highlight-Solidity"><div class="highlight"><pre><span></span><span class="cs">/// THIS CONTRACT CONTAINS AN ERROR</span>
+
+<span class="k">pragma</span> <span class="nx">solidity</span> <span class="o">^</span><span class="mf">0.4</span><span class="p">.</span><span class="mi">0</span><span class="p">;</span>
+
+<span class="kd">contract</span> <span class="nx">C</span> <span class="p">{</span>
+    <span class="kt">uint</span> <span class="nx">someVariable</span><span class="p">;</span>
+    <span class="kt">uint</span><span class="p">[]</span> <span class="nx">data</span><span class="p">;</span>
+
+    <span class="kd">function</span> <span class="nx">f</span><span class="p">()</span> <span class="k">public</span> <span class="p">{</span>
+        <span class="kt">uint</span><span class="p">[]</span> <span class="nx">x</span><span class="p">;</span>
+        <span class="nx">x</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+        <span class="nx">data</span> <span class="o">=</span> <span class="nx">x</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The type of the local variable <code class="docutils literal"><span class="pre">x</span></code> is <code class="docutils literal"><span class="pre">uint[]</span> <span class="pre">storage</span></code>, but since
+storage is not dynamically allocated, it has to be assigned from
+a state variable before it can be used. So no space in storage will be
+allocated for <code class="docutils literal"><span class="pre">x</span></code>, but instead it functions only as an alias for
+a pre-existing variable in storage.</p>
+<p>What will happen is that the compiler interprets <code class="docutils literal"><span class="pre">x</span></code> as a storage
+pointer and will make it point to the storage slot <code class="docutils literal"><span class="pre">0</span></code> by default.
+This has the effect that <code class="docutils literal"><span class="pre">someVariable</span></code> (which resides at storage
+slot <code class="docutils literal"><span class="pre">0</span></code>) is modified by <code class="docutils literal"><span class="pre">x.push(2)</span></code>.</p>
+<p>The correct way to do this is the following:</p>
+<div class="highlight-Solidity"><div class="highlight"><pre><span></span><span class="k">pragma</span> <span class="nx">solidity</span> <span class="o">^</span><span class="mf">0.4</span><span class="p">.</span><span class="mi">0</span><span class="p">;</span>
+
+<span class="kd">contract</span> <span class="nx">C</span> <span class="p">{</span>
+    <span class="kt">uint</span> <span class="nx">someVariable</span><span class="p">;</span>
+    <span class="kt">uint</span><span class="p">[]</span> <span class="nx">data</span><span class="p">;</span>
+
+    <span class="kd">function</span> <span class="nx">f</span><span class="p">()</span> <span class="k">public</span> <span class="p">{</span>
+        <span class="kt">uint</span><span class="p">[]</span> <span class="nx">x</span> <span class="o">=</span> <span class="nx">data</span><span class="p">;</span>
+        <span class="nx">x</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="advanced-questions">
+<h2>Advanced Questions<a class="headerlink" href="#advanced-questions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="how-do-you-get-a-random-number-in-a-contract-implement-a-self-returning-gambling-contract">
+<h3>How do you get a random number in a contract? (Implement a self-returning gambling contract.)<a class="headerlink" href="#how-do-you-get-a-random-number-in-a-contract-implement-a-self-returning-gambling-contract" title="Permalink to this headline">¶</a></h3>
+<p>Getting randomness right is often the crucial part in a crypto project and
+most failures result from bad random number generators.</p>
+<p>If you do not want it to be safe, you build something similar to the <a class="reference external" href="https://github.com/fivedogit/solidity-baby-steps/blob/master/contracts/35_coin_flipper.sol">coin flipper</a>
+but otherwise, rather use a contract that supplies randomness, like the <a class="reference external" href="https://github.com/randao/randao">RANDAO</a>.</p>
+</div>
+<div class="section" id="get-return-value-from-non-constant-function-from-another-contract">
+<h3>Get return value from non-constant function from another contract<a class="headerlink" href="#get-return-value-from-non-constant-function-from-another-contract" title="Permalink to this headline">¶</a></h3>
+<p>The key point is that the calling contract needs to know about the function it intends to call.</p>
+<p>See <a class="reference external" href="https://github.com/fivedogit/solidity-baby-steps/blob/master/contracts/45_ping.sol">ping.sol</a>
+and <a class="reference external" href="https://github.com/fivedogit/solidity-baby-steps/blob/master/contracts/45_pong.sol">pong.sol</a>.</p>
+</div>
+<div class="section" id="get-contract-to-do-something-when-it-is-first-mined">
+<h3>Get contract to do something when it is first mined<a class="headerlink" href="#get-contract-to-do-something-when-it-is-first-mined" title="Permalink to this headline">¶</a></h3>
+<p>Use the constructor. Anything inside it will be executed when the contract is first mined.</p>
+<p>See <a class="reference external" href="https://github.com/fivedogit/solidity-baby-steps/blob/master/contracts/50_replicator.sol">replicator.sol</a>.</p>
+</div>
+<div class="section" id="how-do-you-create-2-dimensional-arrays">
+<h3>How do you create 2-dimensional arrays?<a class="headerlink" href="#how-do-you-create-2-dimensional-arrays" title="Permalink to this headline">¶</a></h3>
+<p>See <a class="reference external" href="https://github.com/fivedogit/solidity-baby-steps/blob/master/contracts/55_2D_array.sol">2D_array.sol</a>.</p>
+<p>Note that filling a 10x10 square of <code class="docutils literal"><span class="pre">uint8</span></code> + contract creation took more than <code class="docutils literal"><span class="pre">800,000</span></code>
+gas at the time of this writing. 17x17 took <code class="docutils literal"><span class="pre">2,000,000</span></code> gas. With the limit at
+3.14 million… well, there’s a pretty low ceiling for what you can create right
+now.</p>
+<p>Note that merely “creating” the array is free, the costs are in filling it.</p>
+<p>Note2: Optimizing storage access can pull the gas costs down considerably, because
+32 <code class="docutils literal"><span class="pre">uint8</span></code> values can be stored in a single slot. The problem is that these optimizations
+currently do not work across loops and also have a problem with bounds checking.
+You might get much better results in the future, though.</p>
+</div>
+<div class="section" id="what-happens-to-a-struct-s-mapping-when-copying-over-a-struct">
+<h3>What happens to a <code class="docutils literal"><span class="pre">struct</span></code>’s mapping when copying over a <code class="docutils literal"><span class="pre">struct</span></code>?<a class="headerlink" href="#what-happens-to-a-struct-s-mapping-when-copying-over-a-struct" title="Permalink to this headline">¶</a></h3>
+<p>This is a very interesting question. Suppose that we have a contract field set up like such:</p>
+<div class="highlight-Solidity"><div class="highlight"><pre><span></span><span class="kd">struct</span> <span class="nx">User</span> <span class="p">{</span>
+    <span class="k">mapping</span><span class="p">(</span><span class="kt">string</span> <span class="o">=&gt;</span> <span class="kt">string</span><span class="p">)</span> <span class="nx">comments</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">somefunction</span> <span class="k">public</span> <span class="p">{</span>
+   <span class="nx">User</span> <span class="nx">user1</span><span class="p">;</span>
+   <span class="nx">user1</span><span class="p">.</span><span class="nx">comments</span><span class="p">[</span><span class="s2">&quot;Hello&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;World&quot;</span><span class="p">;</span>
+   <span class="nx">User</span> <span class="nx">user2</span> <span class="o">=</span> <span class="nx">user1</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>In this case, the mapping of the struct being copied over into the userList is ignored as there is no “list of mapped keys”.
+Therefore it is not possible to find out which values should be copied over.</p>
+</div>
+<div class="section" id="how-do-i-initialize-a-contract-with-only-a-specific-amount-of-wei">
+<h3>How do I initialize a contract with only a specific amount of wei?<a class="headerlink" href="#how-do-i-initialize-a-contract-with-only-a-specific-amount-of-wei" title="Permalink to this headline">¶</a></h3>
+<p>Currently the approach is a little ugly, but there is little that can be done to improve it.
+In the case of a <code class="docutils literal"><span class="pre">contract</span> <span class="pre">A</span></code> calling a new instance of <code class="docutils literal"><span class="pre">contract</span> <span class="pre">B</span></code>, parentheses have to be used around
+<code class="docutils literal"><span class="pre">new</span> <span class="pre">B</span></code> because <code class="docutils literal"><span class="pre">B.value</span></code> would refer to a member of <code class="docutils literal"><span class="pre">B</span></code> called <code class="docutils literal"><span class="pre">value</span></code>.
+You will need to make sure that you have both contracts aware of each other’s presence and that <code class="docutils literal"><span class="pre">contract</span> <span class="pre">B</span></code> has a <code class="docutils literal"><span class="pre">payable</span></code> constructor.
+In this example:</p>
+<div class="highlight-Solidity"><div class="highlight"><pre><span></span><span class="k">pragma</span> <span class="nx">solidity</span> <span class="o">^</span><span class="mf">0.4</span><span class="p">.</span><span class="mi">0</span><span class="p">;</span>
+
+<span class="kd">contract</span> <span class="nx">B</span> <span class="p">{</span>
+    <span class="kd">function</span> <span class="nx">B</span><span class="p">()</span> <span class="k">public</span> <span class="k">payable</span> <span class="p">{}</span>
+<span class="p">}</span>
+
+<span class="kd">contract</span> <span class="nx">A</span> <span class="p">{</span>
+    <span class="kt">address</span> <span class="nx">child</span><span class="p">;</span>
+
+    <span class="kd">function</span> <span class="nx">test</span><span class="p">()</span> <span class="k">public</span> <span class="p">{</span>
+        <span class="nx">child</span> <span class="o">=</span> <span class="p">(</span><span class="k">new</span> <span class="nx">B</span><span class="p">).</span><span class="nx">value</span><span class="p">(</span><span class="mi">10</span><span class="p">)();</span> <span class="c1">//construct a new B with 10 wei</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="can-a-contract-function-accept-a-two-dimensional-array">
+<h3>Can a contract function accept a two-dimensional array?<a class="headerlink" href="#can-a-contract-function-accept-a-two-dimensional-array" title="Permalink to this headline">¶</a></h3>
+<p>This is not yet implemented for external calls and dynamic arrays -
+you can only use one level of dynamic arrays.</p>
+</div>
+<div class="section" id="what-is-the-relationship-between-bytes32-and-string-why-is-it-that-bytes32-somevar-stringliteral-works-and-what-does-the-saved-32-byte-hex-value-mean">
+<h3>What is the relationship between <code class="docutils literal"><span class="pre">bytes32</span></code> and <code class="docutils literal"><span class="pre">string</span></code>? Why is it that <code class="docutils literal"><span class="pre">bytes32</span> <span class="pre">somevar</span> <span class="pre">=</span> <span class="pre">&quot;stringliteral&quot;;</span></code> works and what does the saved 32-byte hex value mean?<a class="headerlink" href="#what-is-the-relationship-between-bytes32-and-string-why-is-it-that-bytes32-somevar-stringliteral-works-and-what-does-the-saved-32-byte-hex-value-mean" title="Permalink to this headline">¶</a></h3>
+<p>The type <code class="docutils literal"><span class="pre">bytes32</span></code> can hold 32 (raw) bytes. In the assignment <code class="docutils literal"><span class="pre">bytes32</span> <span class="pre">samevar</span> <span class="pre">=</span> <span class="pre">&quot;stringliteral&quot;;</span></code>,
+the string literal is interpreted in its raw byte form and if you inspect <code class="docutils literal"><span class="pre">somevar</span></code> and
+see a 32-byte hex value, this is just <code class="docutils literal"><span class="pre">&quot;stringliteral&quot;</span></code> in hex.</p>
+<p>The type <code class="docutils literal"><span class="pre">bytes</span></code> is similar, only that it can change its length.</p>
+<p>Finally, <code class="docutils literal"><span class="pre">string</span></code> is basically identical to <code class="docutils literal"><span class="pre">bytes</span></code> only that it is assumed
+to hold the UTF-8 encoding of a real string. Since <code class="docutils literal"><span class="pre">string</span></code> stores the
+data in UTF-8 encoding it is quite expensive to compute the number of
+characters in the string (the encoding of some characters takes more
+than a single byte). Because of that, <code class="docutils literal"><span class="pre">string</span> <span class="pre">s;</span> <span class="pre">s.length</span></code> is not yet
+supported and not even index access <code class="docutils literal"><span class="pre">s[2]</span></code>. But if you want to access
+the low-level byte encoding of the string, you can use
+<code class="docutils literal"><span class="pre">bytes(s).length</span></code> and <code class="docutils literal"><span class="pre">bytes(s)[2]</span></code> which will result in the number
+of bytes in the UTF-8 encoding of the string (not the number of
+characters) and the second byte (not character) of the UTF-8 encoded
+string, respectively.</p>
+</div>
+<div class="section" id="can-a-contract-pass-an-array-static-size-or-string-or-bytes-dynamic-size-to-another-contract">
+<h3>Can a contract pass an array (static size) or string or <code class="docutils literal"><span class="pre">bytes</span></code> (dynamic size) to another contract?<a class="headerlink" href="#can-a-contract-pass-an-array-static-size-or-string-or-bytes-dynamic-size-to-another-contract" title="Permalink to this headline">¶</a></h3>
+<p>Sure. Take care that if you cross the memory / storage boundary,
+independent copies will be created:</p>
+<div class="highlight-Solidity"><div class="highlight"><pre><span></span><span class="k">pragma</span> <span class="nx">solidity</span> <span class="o">^</span><span class="mf">0.4</span><span class="p">.</span><span class="mi">16</span><span class="p">;</span>
+
+<span class="kd">contract</span> <span class="nx">C</span> <span class="p">{</span>
+    <span class="kt">uint</span><span class="p">[</span><span class="mi">20</span><span class="p">]</span> <span class="nx">x</span><span class="p">;</span>
+
+    <span class="kd">function</span> <span class="nx">f</span><span class="p">()</span> <span class="k">public</span> <span class="p">{</span>
+        <span class="nx">g</span><span class="p">(</span><span class="nx">x</span><span class="p">);</span>
+        <span class="nx">h</span><span class="p">(</span><span class="nx">x</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="kd">function</span> <span class="nx">g</span><span class="p">(</span><span class="kt">uint</span><span class="p">[</span><span class="mi">20</span><span class="p">]</span> <span class="nx">y</span><span class="p">)</span> <span class="k">internal</span> <span class="k">pure</span> <span class="p">{</span>
+        <span class="nx">y</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kd">function</span> <span class="nx">h</span><span class="p">(</span><span class="kt">uint</span><span class="p">[</span><span class="mi">20</span><span class="p">]</span> <span class="k">storage</span> <span class="nx">y</span><span class="p">)</span> <span class="k">internal</span> <span class="p">{</span>
+        <span class="nx">y</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The call to <code class="docutils literal"><span class="pre">g(x)</span></code> will not have an effect on <code class="docutils literal"><span class="pre">x</span></code> because it needs
+to create an independent copy of the storage value in memory
+(the default storage location is memory). On the other hand,
+<code class="docutils literal"><span class="pre">h(x)</span></code> successfully modifies <code class="docutils literal"><span class="pre">x</span></code> because only a reference
+and not a copy is passed.</p>
+</div>
+<div class="section" id="sometimes-when-i-try-to-change-the-length-of-an-array-with-ex-arrayname-length-7-i-get-a-compiler-error-value-must-be-an-lvalue-why">
+<h3>Sometimes, when I try to change the length of an array with ex: <code class="docutils literal"><span class="pre">arrayname.length</span> <span class="pre">=</span> <span class="pre">7;</span></code> I get a compiler error <code class="docutils literal"><span class="pre">Value</span> <span class="pre">must</span> <span class="pre">be</span> <span class="pre">an</span> <span class="pre">lvalue</span></code>. Why?<a class="headerlink" href="#sometimes-when-i-try-to-change-the-length-of-an-array-with-ex-arrayname-length-7-i-get-a-compiler-error-value-must-be-an-lvalue-why" title="Permalink to this headline">¶</a></h3>
+<p>You can resize a dynamic array in storage (i.e. an array declared at the
+contract level) with <code class="docutils literal"><span class="pre">arrayname.length</span> <span class="pre">=</span> <span class="pre">&lt;some</span> <span class="pre">new</span> <span class="pre">length&gt;;</span></code>. If you get the
+“lvalue” error, you are probably doing one of two things wrong.</p>
+<ol class="arabic simple">
+<li>You might be trying to resize an array in “memory”, or</li>
+<li>You might be trying to resize a non-dynamic array.</li>
+</ol>
+<div class="highlight-Solidity"><div class="highlight"><pre><span></span><span class="kt">int8</span><span class="p">[]</span> <span class="k">memory</span> <span class="nx">memArr</span><span class="p">;</span>        <span class="c1">// Case 1</span>
+<span class="nx">memArr</span><span class="p">.</span><span class="nx">length</span><span class="o">++</span><span class="p">;</span>             <span class="c1">// illegal</span>
+<span class="kt">int8</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="nx">storageArr</span><span class="p">;</span>          <span class="c1">// Case 2</span>
+<span class="nx">somearray</span><span class="p">.</span><span class="nx">length</span><span class="o">++</span><span class="p">;</span>          <span class="c1">// legal</span>
+<span class="kt">int8</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="k">storage</span> <span class="nx">storageArr2</span><span class="p">;</span> <span class="c1">// Explicit case 2</span>
+<span class="nx">somearray2</span><span class="p">.</span><span class="nx">length</span><span class="o">++</span><span class="p">;</span>         <span class="c1">// legal</span>
+</pre></div>
+</div>
+<p><strong>Important note:</strong> In Solidity, array dimensions are declared backwards from the way you
+might be used to declaring them in C or Java, but they are access as in
+C or Java.</p>
+<p>For example, <code class="docutils literal"><span class="pre">int8[][5]</span> <span class="pre">somearray;</span></code> are 5 dynamic <code class="docutils literal"><span class="pre">int8</span></code> arrays.</p>
+<p>The reason for this is that <code class="docutils literal"><span class="pre">T[5]</span></code> is always an array of 5 <code class="docutils literal"><span class="pre">T</span></code>’s,
+no matter whether <code class="docutils literal"><span class="pre">T</span></code> itself is an array or not (this is not the
+case in C or Java).</p>
+</div>
+<div class="section" id="is-it-possible-to-return-an-array-of-strings-string-from-a-solidity-function">
+<h3>Is it possible to return an array of strings (<code class="docutils literal"><span class="pre">string[]</span></code>) from a Solidity function?<a class="headerlink" href="#is-it-possible-to-return-an-array-of-strings-string-from-a-solidity-function" title="Permalink to this headline">¶</a></h3>
+<p>Not yet, as this requires two levels of dynamic arrays (<code class="docutils literal"><span class="pre">string</span></code> is a dynamic array itself).</p>
+</div>
+<div class="section" id="if-you-issue-a-call-for-an-array-it-is-possible-to-retrieve-the-whole-array-or-must-you-write-a-helper-function-for-that">
+<h3>If you issue a call for an array, it is possible to retrieve the whole array? Or must you write a helper function for that?<a class="headerlink" href="#if-you-issue-a-call-for-an-array-it-is-possible-to-retrieve-the-whole-array-or-must-you-write-a-helper-function-for-that" title="Permalink to this headline">¶</a></h3>
+<p>The automatic <a class="reference internal" href="contracts.html#getter-functions"><span class="std std-ref">getter function</span></a>  for a public state variable of array type only returns
+individual elements. If you want to return the complete array, you have to
+manually write a function to do that.</p>
+</div>
+<div class="section" id="what-could-have-happened-if-an-account-has-storage-value-s-but-no-code-example-http-test-ether-camp-account-5f740b3a43fbb99724ce93a879805f4dc89178b5">
+<h3>What could have happened if an account has storage value(s) but no code?  Example: <a class="reference external" href="http://test.ether.camp/account/5f740b3a43fbb99724ce93a879805f4dc89178b5">http://test.ether.camp/account/5f740b3a43fbb99724ce93a879805f4dc89178b5</a><a class="headerlink" href="#what-could-have-happened-if-an-account-has-storage-value-s-but-no-code-example-http-test-ether-camp-account-5f740b3a43fbb99724ce93a879805f4dc89178b5" title="Permalink to this headline">¶</a></h3>
+<p>The last thing a constructor does is returning the code of the contract.
+The gas costs for this depend on the length of the code and it might be
+that the supplied gas is not enough. This situation is the only one
+where an “out of gas” exception does not revert changes to the state,
+i.e. in this case the initialisation of the state variables.</p>
+<p><a class="reference external" href="https://github.com/ethereum/wiki/wiki/Subtleties">https://github.com/ethereum/wiki/wiki/Subtleties</a></p>
+<p>After a successful CREATE operation’s sub-execution, if the operation returns x, 5 * len(x) gas is subtracted from the remaining gas before the contract is created. If the remaining gas is less than 5 * len(x), then no gas is subtracted, the code of the created contract becomes the empty string, but this is not treated as an exceptional condition - no reverts happen.</p>
+</div>
+<div class="section" id="what-does-the-following-strange-check-do-in-the-custom-token-contract">
+<h3>What does the following strange check do in the Custom Token contract?<a class="headerlink" href="#what-does-the-following-strange-check-do-in-the-custom-token-contract" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-Solidity"><div class="highlight"><pre><span></span><span class="nb">require</span><span class="p">((</span><span class="nx">balanceOf</span><span class="p">[</span><span class="nx">_to</span><span class="p">]</span> <span class="o">+</span> <span class="nx">_value</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="nx">balanceOf</span><span class="p">[</span><span class="nx">_to</span><span class="p">]);</span>
+</pre></div>
+</div>
+<p>Integers in Solidity (and most other machine-related programming languages) are restricted to a certain range.
+For <code class="docutils literal"><span class="pre">uint256</span></code>, this is <code class="docutils literal"><span class="pre">0</span></code> up to <code class="docutils literal"><span class="pre">2**256</span> <span class="pre">-</span> <span class="pre">1</span></code>. If the result of some operation on those numbers
+does not fit inside this range, it is truncated. These truncations can have
+<a class="reference external" href="https://en.bitcoin.it/wiki/Value_overflow_incident">serious consequences</a>, so code like the one
+above is necessary to avoid certain attacks.</p>
+</div>
+<div class="section" id="more-questions">
+<h3>More Questions?<a class="headerlink" href="#more-questions" title="Permalink to this headline">¶</a></h3>
+<p>If you have more questions or your question is not answered here, please talk to us on
+<a class="reference external" href="https://gitter.im/ethereum/solidity">gitter</a> or file an <a class="reference external" href="https://github.com/ethereum/solidity/issues">issue</a>.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Frequently Asked Questions</a><ul>
+<li><a class="reference internal" href="#basic-questions">Basic Questions</a><ul>
+<li><a class="reference internal" href="#example-contracts">Example contracts</a></li>
+<li><a class="reference internal" href="#create-and-publish-the-most-basic-contract-possible">Create and publish the most basic contract possible</a></li>
+<li><a class="reference internal" href="#is-it-possible-to-do-something-on-a-specific-block-number-e-g-publish-a-contract-or-execute-a-transaction">Is it possible to do something on a specific block number? (e.g. publish a contract or execute a transaction)</a></li>
+<li><a class="reference internal" href="#what-is-the-transaction-payload">What is the transaction “payload”?</a></li>
+<li><a class="reference internal" href="#is-there-a-decompiler-available">Is there a decompiler available?</a></li>
+<li><a class="reference internal" href="#create-a-contract-that-can-be-killed-and-return-funds">Create a contract that can be killed and return funds</a></li>
+<li><a class="reference internal" href="#store-ether-in-a-contract">Store Ether in a contract</a></li>
+<li><a class="reference internal" href="#use-a-non-constant-function-req-sendtransaction-to-increment-a-variable-in-a-contract">Use a non-constant function (req <code class="docutils literal"><span class="pre">sendTransaction</span></code>) to increment a variable in a contract</a></li>
+<li><a class="reference internal" href="#get-a-contract-to-return-its-funds-to-you-not-using-selfdestruct">Get a contract to return its funds to you (not using <code class="docutils literal"><span class="pre">selfdestruct(...)</span></code>).</a></li>
+<li><a class="reference internal" href="#can-you-return-an-array-or-a-string-from-a-solidity-function-call">Can you return an array or a <code class="docutils literal"><span class="pre">string</span></code> from a solidity function call?</a></li>
+<li><a class="reference internal" href="#is-it-possible-to-in-line-initialize-an-array-like-so-string-myarray-a-b">Is it possible to in-line initialize an array like so: <code class="docutils literal"><span class="pre">string[]</span> <span class="pre">myarray</span> <span class="pre">=</span> <span class="pre">[&quot;a&quot;,</span> <span class="pre">&quot;b&quot;];</span></code></a></li>
+<li><a class="reference internal" href="#can-a-contract-function-return-a-struct">Can a contract function return a <code class="docutils literal"><span class="pre">struct</span></code>?</a></li>
+<li><a class="reference internal" href="#if-i-return-an-enum-i-only-get-integer-values-in-web3-js-how-to-get-the-named-values">If I return an <code class="docutils literal"><span class="pre">enum</span></code>, I only get integer values in web3.js. How to get the named values?</a></li>
+<li><a class="reference internal" href="#can-state-variables-be-initialized-in-line">Can state variables be initialized in-line?</a></li>
+<li><a class="reference internal" href="#how-do-structs-work">How do structs work?</a></li>
+<li><a class="reference internal" href="#how-do-for-loops-work">How do for loops work?</a></li>
+<li><a class="reference internal" href="#what-are-some-examples-of-basic-string-manipulation-substring-indexof-charat-etc">What are some examples of basic string manipulation (<code class="docutils literal"><span class="pre">substring</span></code>, <code class="docutils literal"><span class="pre">indexOf</span></code>, <code class="docutils literal"><span class="pre">charAt</span></code>, etc)?</a></li>
+<li><a class="reference internal" href="#can-i-concatenate-two-strings">Can I concatenate two strings?</a></li>
+<li><a class="reference internal" href="#why-is-the-low-level-function-call-less-favorable-than-instantiating-a-contract-with-a-variable-contractb-b-and-executing-its-functions-b-dosomething">Why is the low-level function <code class="docutils literal"><span class="pre">.call()</span></code> less favorable than instantiating a contract with a variable (<code class="docutils literal"><span class="pre">ContractB</span> <span class="pre">b;</span></code>) and executing its functions (<code class="docutils literal"><span class="pre">b.doSomething();</span></code>)?</a></li>
+<li><a class="reference internal" href="#is-unused-gas-automatically-refunded">Is unused gas automatically refunded?</a></li>
+<li><a class="reference internal" href="#when-returning-a-value-of-say-uint-type-is-it-possible-to-return-an-undefined-or-null-like-value">When returning a value of say <code class="docutils literal"><span class="pre">uint</span></code> type, is it possible to return an <code class="docutils literal"><span class="pre">undefined</span></code> or “null”-like value?</a></li>
+<li><a class="reference internal" href="#are-comments-included-with-deployed-contracts-and-do-they-increase-deployment-gas">Are comments included with deployed contracts and do they increase deployment gas?</a></li>
+<li><a class="reference internal" href="#what-happens-if-you-send-ether-along-with-a-function-call-to-a-contract">What happens if you send ether along with a function call to a contract?</a></li>
+<li><a class="reference internal" href="#is-it-possible-to-get-a-tx-receipt-for-a-transaction-executed-contract-to-contract">Is it possible to get a tx receipt for a transaction executed contract-to-contract?</a></li>
+<li><a class="reference internal" href="#what-is-the-memory-keyword-what-does-it-do">What is the <code class="docutils literal"><span class="pre">memory</span></code> keyword? What does it do?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#advanced-questions">Advanced Questions</a><ul>
+<li><a class="reference internal" href="#how-do-you-get-a-random-number-in-a-contract-implement-a-self-returning-gambling-contract">How do you get a random number in a contract? (Implement a self-returning gambling contract.)</a></li>
+<li><a class="reference internal" href="#get-return-value-from-non-constant-function-from-another-contract">Get return value from non-constant function from another contract</a></li>
+<li><a class="reference internal" href="#get-contract-to-do-something-when-it-is-first-mined">Get contract to do something when it is first mined</a></li>
+<li><a class="reference internal" href="#how-do-you-create-2-dimensional-arrays">How do you create 2-dimensional arrays?</a></li>
+<li><a class="reference internal" href="#what-happens-to-a-struct-s-mapping-when-copying-over-a-struct">What happens to a <code class="docutils literal"><span class="pre">struct</span></code>’s mapping when copying over a <code class="docutils literal"><span class="pre">struct</span></code>?</a></li>
+<li><a class="reference internal" href="#how-do-i-initialize-a-contract-with-only-a-specific-amount-of-wei">How do I initialize a contract with only a specific amount of wei?</a></li>
+<li><a class="reference internal" href="#can-a-contract-function-accept-a-two-dimensional-array">Can a contract function accept a two-dimensional array?</a></li>
+<li><a class="reference internal" href="#what-is-the-relationship-between-bytes32-and-string-why-is-it-that-bytes32-somevar-stringliteral-works-and-what-does-the-saved-32-byte-hex-value-mean">What is the relationship between <code class="docutils literal"><span class="pre">bytes32</span></code> and <code class="docutils literal"><span class="pre">string</span></code>? Why is it that <code class="docutils literal"><span class="pre">bytes32</span> <span class="pre">somevar</span> <span class="pre">=</span> <span class="pre">&quot;stringliteral&quot;;</span></code> works and what does the saved 32-byte hex value mean?</a></li>
+<li><a class="reference internal" href="#can-a-contract-pass-an-array-static-size-or-string-or-bytes-dynamic-size-to-another-contract">Can a contract pass an array (static size) or string or <code class="docutils literal"><span class="pre">bytes</span></code> (dynamic size) to another contract?</a></li>
+<li><a class="reference internal" href="#sometimes-when-i-try-to-change-the-length-of-an-array-with-ex-arrayname-length-7-i-get-a-compiler-error-value-must-be-an-lvalue-why">Sometimes, when I try to change the length of an array with ex: <code class="docutils literal"><span class="pre">arrayname.length</span> <span class="pre">=</span> <span class="pre">7;</span></code> I get a compiler error <code class="docutils literal"><span class="pre">Value</span> <span class="pre">must</span> <span class="pre">be</span> <span class="pre">an</span> <span class="pre">lvalue</span></code>. Why?</a></li>
+<li><a class="reference internal" href="#is-it-possible-to-return-an-array-of-strings-string-from-a-solidity-function">Is it possible to return an array of strings (<code class="docutils literal"><span class="pre">string[]</span></code>) from a Solidity function?</a></li>
+<li><a class="reference internal" href="#if-you-issue-a-call-for-an-array-it-is-possible-to-retrieve-the-whole-array-or-must-you-write-a-helper-function-for-that">If you issue a call for an array, it is possible to retrieve the whole array? Or must you write a helper function for that?</a></li>
+<li><a class="reference internal" href="#what-could-have-happened-if-an-account-has-storage-value-s-but-no-code-example-http-test-ether-camp-account-5f740b3a43fbb99724ce93a879805f4dc89178b5">What could have happened if an account has storage value(s) but no code?  Example: http://test.ether.camp/account/5f740b3a43fbb99724ce93a879805f4dc89178b5</a></li>
+<li><a class="reference internal" href="#what-does-the-following-strange-check-do-in-the-custom-token-contract">What does the following strange check do in the Custom Token contract?</a></li>
+<li><a class="reference internal" href="#more-questions">More Questions?</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="contributing.html" title="previous chapter">Contributing</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/frequently-asked-questions.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016-2017, Ethereum.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/frequently-asked-questions.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

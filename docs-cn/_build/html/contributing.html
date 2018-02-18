@@ -1,0 +1,184 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Contributing &#8212; Solidity 0.4.20 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.4.20',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Frequently Asked Questions" href="frequently-asked-questions.html" />
+    <link rel="prev" title="List of Known Bugs" href="bugs.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="contributing">
+<h1>Contributing<a class="headerlink" href="#contributing" title="Permalink to this headline">¶</a></h1>
+<p>Help is always appreciated!</p>
+<p>To get started, you can try <a class="reference internal" href="installing-solidity.html#building-from-source"><span class="std std-ref">Building from Source</span></a> in order to familiarize
+yourself with the components of Solidity and the build process. Also, it may be
+useful to become well-versed at writing smart-contracts in Solidity.</p>
+<p>In particular, we need help in the following areas:</p>
+<ul class="simple">
+<li>Improving the documentation</li>
+<li>Responding to questions from other users on <a class="reference external" href="https://ethereum.stackexchange.com">StackExchange</a> and the <a class="reference external" href="https://gitter.im/ethereum/solidity">Solidity Gitter</a></li>
+<li>Fixing and responding to <a class="reference external" href="https://github.com/ethereum/solidity/issues">Solidity’s GitHub issues</a>, especially those tagged as
+<a class="reference external" href="https://github.com/ethereum/solidity/issues?q=is%3Aopen+is%3Aissue+label%3Aup-for-grabs">up-for-grabs</a> which are
+meant as introductory issues for external contributors.</li>
+</ul>
+<div class="section" id="how-to-report-issues">
+<h2>How to Report Issues<a class="headerlink" href="#how-to-report-issues" title="Permalink to this headline">¶</a></h2>
+<p>To report an issue, please use the
+<a class="reference external" href="https://github.com/ethereum/solidity/issues">GitHub issues tracker</a>. When
+reporting issues, please mention the following details:</p>
+<ul class="simple">
+<li>Which version of Solidity you are using</li>
+<li>What was the source code (if applicable)</li>
+<li>Which platform are you running on</li>
+<li>How to reproduce the issue</li>
+<li>What was the result of the issue</li>
+<li>What the expected behaviour is</li>
+</ul>
+<p>Reducing the source code that caused the issue to a bare minimum is always
+very helpful and sometimes even clarifies a misunderstanding.</p>
+</div>
+<div class="section" id="workflow-for-pull-requests">
+<h2>Workflow for Pull Requests<a class="headerlink" href="#workflow-for-pull-requests" title="Permalink to this headline">¶</a></h2>
+<p>In order to contribute, please fork off of the <code class="docutils literal"><span class="pre">develop</span></code> branch and make your
+changes there. Your commit messages should detail <em>why</em> you made your change
+in addition to <em>what</em> you did (unless it is a tiny change).</p>
+<p>If you need to pull in any changes from <code class="docutils literal"><span class="pre">develop</span></code> after making your fork (for
+example, to resolve potential merge conflicts), please avoid using <code class="docutils literal"><span class="pre">git</span> <span class="pre">merge</span></code>
+and instead, <code class="docutils literal"><span class="pre">git</span> <span class="pre">rebase</span></code> your branch.</p>
+<p>Additionally, if you are writing a new feature, please ensure you write appropriate
+Boost test cases and place them under <code class="docutils literal"><span class="pre">test/</span></code>.</p>
+<p>However, if you are making a larger change, please consult with the <a class="reference external" href="https://gitter.im/ethereum/solidity-dev">Solidity Development Gitter channel</a> (different from the one mentioned above, this on is
+focused on compiler and language development instead of language use) first.</p>
+<p>Finally, please make sure you respect the <a class="reference external" href="https://raw.githubusercontent.com/ethereum/cpp-ethereum/develop/CodingStandards.txt">coding standards</a>
+for this project. Also, even though we do CI testing, please test your code and
+ensure that it builds locally before submitting a pull request.</p>
+<p>Thank you for your help!</p>
+</div>
+<div class="section" id="running-the-compiler-tests">
+<h2>Running the compiler tests<a class="headerlink" href="#running-the-compiler-tests" title="Permalink to this headline">¶</a></h2>
+<p>Solidity includes different types of tests. They are included in the application
+called <code class="docutils literal"><span class="pre">soltest</span></code>. Some of them require the <code class="docutils literal"><span class="pre">cpp-ethereum</span></code> client in testing mode,
+some others require <code class="docutils literal"><span class="pre">libz3</span></code> to be installed.</p>
+<p>To disable the z3 tests, use <code class="docutils literal"><span class="pre">./build/test/soltest</span> <span class="pre">--</span> <span class="pre">--no-smt</span></code> and
+to run a subset of the tests that do not require <code class="docutils literal"><span class="pre">cpp-ethereum</span></code>, use <code class="docutils literal"><span class="pre">./build/test/soltest</span> <span class="pre">--</span> <span class="pre">--no-ipc</span></code>.</p>
+<p>For all other tests, you need to install <a class="reference external" href="https://github.com/ethereum/cpp-ethereum/releases/download/solidityTester/eth">cpp-ethereum</a> and run it in testing mode: <code class="docutils literal"><span class="pre">eth</span> <span class="pre">--test</span> <span class="pre">-d</span> <span class="pre">/tmp/testeth</span></code>.</p>
+<p>Then you run the actual tests: <code class="docutils literal"><span class="pre">./build/test/soltest</span> <span class="pre">--</span> <span class="pre">--ipcpath</span> <span class="pre">/tmp/testeth/geth.ipc</span></code>.</p>
+<p>To run a subset of tests, filters can be used:
+<code class="docutils literal"><span class="pre">soltest</span> <span class="pre">-t</span> <span class="pre">TestSuite/TestName</span> <span class="pre">--</span> <span class="pre">--ipcpath</span> <span class="pre">/tmp/testeth/geth.ipc</span></code>, where <code class="docutils literal"><span class="pre">TestName</span></code> can be a wildcard <code class="docutils literal"><span class="pre">*</span></code>.</p>
+<p>Alternatively, there is a testing script at <code class="docutils literal"><span class="pre">scripts/test.sh</span></code> which executes all tests and runs
+<code class="docutils literal"><span class="pre">cpp-ethereum</span></code> automatically if it is in the path (but does not download it).</p>
+<p>Travis CI even runs some additional tests (including <code class="docutils literal"><span class="pre">solc-js</span></code> and testing third party Solidity frameworks) that require compiling the Emscripten target.</p>
+</div>
+<div class="section" id="whiskers">
+<h2>Whiskers<a class="headerlink" href="#whiskers" title="Permalink to this headline">¶</a></h2>
+<p><em>Whiskers</em> is a templating system similar to <a class="reference external" href="https://mustache.github.io">Mustache</a>. It is used by the
+compiler in various places to aid readability, and thus maintainability and verifiability, of the code.</p>
+<p>The syntax comes with a substantial difference to Mustache: the template markers <code class="docutils literal"><span class="pre">{{</span></code> and <code class="docutils literal"><span class="pre">}}</span></code> are
+replaced by <code class="docutils literal"><span class="pre">&lt;</span></code> and <code class="docutils literal"><span class="pre">&gt;</span></code> in order to aid parsing and avoid conflicts with <a class="reference internal" href="assembly.html#inline-assembly"><span class="std std-ref">Inline Assembly</span></a>
+(The symbols <code class="docutils literal"><span class="pre">&lt;</span></code> and <code class="docutils literal"><span class="pre">&gt;</span></code> are invalid in inline assembly, while <code class="docutils literal"><span class="pre">{</span></code> and <code class="docutils literal"><span class="pre">}</span></code> are used to delimit blocks).
+Another limitation is that lists are only resolved one depth and they will not recurse. This may change in the future.</p>
+<p>A rough specification is the following:</p>
+<p>Any occurrence of <code class="docutils literal"><span class="pre">&lt;name&gt;</span></code> is replaced by the string-value of the supplied variable <code class="docutils literal"><span class="pre">name</span></code> without any
+escaping and without iterated replacements. An area can be delimited by <code class="docutils literal"><span class="pre">&lt;#name&gt;...&lt;/name&gt;</span></code>. It is replaced
+by as many concatenations of its contents as there were sets of variables supplied to the template system,
+each time replacing any <code class="docutils literal"><span class="pre">&lt;inner&gt;</span></code> items by their respective value. Top-level variables can also be used
+inside such areas.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Contributing</a><ul>
+<li><a class="reference internal" href="#how-to-report-issues">How to Report Issues</a></li>
+<li><a class="reference internal" href="#workflow-for-pull-requests">Workflow for Pull Requests</a></li>
+<li><a class="reference internal" href="#running-the-compiler-tests">Running the compiler tests</a></li>
+<li><a class="reference internal" href="#whiskers">Whiskers</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="bugs.html" title="previous chapter">List of Known Bugs</a></li>
+      <li>Next: <a href="frequently-asked-questions.html" title="next chapter">Frequently Asked Questions</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/contributing.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016-2017, Ethereum.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/contributing.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

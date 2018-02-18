@@ -1,0 +1,240 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Contract Metadata &#8212; Solidity 0.4.20 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.4.20',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Application Binary Interface Specification" href="abi-spec.html" />
+    <link rel="prev" title="Using the compiler" href="using-the-compiler.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="contract-metadata">
+<h1>Contract Metadata<a class="headerlink" href="#contract-metadata" title="Permalink to this headline">¶</a></h1>
+<p id="index-0">The Solidity compiler automatically generates a JSON file, the
+contract metadata, that contains information about the current contract.
+It can be used to query the compiler version, the sources used, the ABI
+and NatSpec documentation in order to more safely interact with the contract
+and to verify its source code.</p>
+<p>The compiler appends a Swarm hash of the metadata file to the end of the
+bytecode (for details, see below) of each contract, so that you can retrieve
+the file in an authenticated way without having to resort to a centralized
+data provider.</p>
+<p>Of course, you have to publish the metadata file to Swarm (or some other service)
+so that others can access it. The file can be output by using <code class="docutils literal"><span class="pre">solc</span> <span class="pre">--metadata</span></code>
+and the file will be called <code class="docutils literal"><span class="pre">ContractName_meta.json</span></code>.
+It will contain Swarm references to the source code, so you have to upload
+all source files and the metadata file.</p>
+<p>The metadata file has the following format. The example below is presented in a
+human-readable way. Properly formatted metadata should use quotes correctly,
+reduce whitespace to a minimum and sort the keys of all objects to arrive at a
+unique formatting.
+Comments are of course also not permitted and used here only for explanatory purposes.</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>{
+  // Required: The version of the metadata format
+  version: &quot;1&quot;,
+  // Required: Source code language, basically selects a &quot;sub-version&quot;
+  // of the specification
+  language: &quot;Solidity&quot;,
+  // Required: Details about the compiler, contents are specific
+  // to the language.
+  compiler: {
+    // Required for Solidity: Version of the compiler
+    version: &quot;0.4.6+commit.2dabbdf0.Emscripten.clang&quot;,
+    // Optional: Hash of the compiler binary which produced this output
+    keccak256: &quot;0x123...&quot;
+  },
+  // Required: Compilation source files/source units, keys are file names
+  sources:
+  {
+    &quot;myFile.sol&quot;: {
+      // Required: keccak256 hash of the source file
+      &quot;keccak256&quot;: &quot;0x123...&quot;,
+      // Required (unless &quot;content&quot; is used, see below): Sorted URL(s)
+      // to the source file, protocol is more or less arbitrary, but a
+      // Swarm URL is recommended
+      &quot;urls&quot;: [ &quot;bzzr://56ab...&quot; ]
+    },
+    &quot;mortal&quot;: {
+      // Required: keccak256 hash of the source file
+      &quot;keccak256&quot;: &quot;0x234...&quot;,
+      // Required (unless &quot;url&quot; is used): literal contents of the source file
+      &quot;content&quot;: &quot;contract mortal is owned { function kill() { if (msg.sender == owner) selfdestruct(owner); } }&quot;
+    }
+  },
+  // Required: Compiler settings
+  settings:
+  {
+    // Required for Solidity: Sorted list of remappings
+    remappings: [ &quot;:g/dir&quot; ],
+    // Optional: Optimizer settings (enabled defaults to false)
+    optimizer: {
+      enabled: true,
+      runs: 500
+    },
+    // Required for Solidity: File and name of the contract or library this
+    // metadata is created for.
+    compilationTarget: {
+      &quot;myFile.sol&quot;: &quot;MyContract&quot;
+    },
+    // Required for Solidity: Addresses for libraries used
+    libraries: {
+      &quot;MyLib&quot;: &quot;0x123123...&quot;
+    }
+  },
+  // Required: Generated information about the contract.
+  output:
+  {
+    // Required: ABI definition of the contract
+    abi: [ ... ],
+    // Required: NatSpec user documentation of the contract
+    userdoc: [ ... ],
+    // Required: NatSpec developer documentation of the contract
+    devdoc: [ ... ],
+  }
+}
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Note the ABI definition above has no fixed order. It can change with compiler versions.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Since the bytecode of the resulting contract contains the metadata hash, any change to
+the metadata will result in a change of the bytecode. Furthermore, since the metadata
+includes a hash of all the sources used, a single whitespace change in any of the source
+codes will result in a different metadata, and subsequently a different bytecode.</p>
+</div>
+<div class="section" id="encoding-of-the-metadata-hash-in-the-bytecode">
+<h2>Encoding of the Metadata Hash in the Bytecode<a class="headerlink" href="#encoding-of-the-metadata-hash-in-the-bytecode" title="Permalink to this headline">¶</a></h2>
+<p>Because we might support other ways to retrieve the metadata file in the future,
+the mapping <code class="docutils literal"><span class="pre">{&quot;bzzr0&quot;:</span> <span class="pre">&lt;Swarm</span> <span class="pre">hash&gt;}</span></code> is stored
+<a class="reference external" href="https://tools.ietf.org/html/rfc7049">CBOR</a>-encoded. Since the beginning of that
+encoding is not easy to find, its length is added in a two-byte big-endian
+encoding. The current version of the Solidity compiler thus adds the following
+to the end of the deployed bytecode:</p>
+<div class="highlight-Solidity"><div class="highlight"><pre><span></span><span class="mh">0xa1</span> <span class="mh">0x65</span> <span class="s1">&#39;b&#39;</span> <span class="s1">&#39;z&#39;</span> <span class="s1">&#39;z&#39;</span> <span class="s1">&#39;r&#39;</span> <span class="s1">&#39;0&#39;</span> <span class="mh">0x58</span> <span class="mh">0x20</span> <span class="o">&lt;</span><span class="mi">32</span> <span class="kt">bytes</span> <span class="nx">swarm</span> <span class="nx">hash</span><span class="o">&gt;</span> <span class="mh">0x00</span> <span class="mh">0x29</span>
+</pre></div>
+</div>
+<p>So in order to retrieve the data, the end of the deployed bytecode can be checked
+to match that pattern and use the Swarm hash to retrieve the file.</p>
+</div>
+<div class="section" id="usage-for-automatic-interface-generation-and-natspec">
+<h2>Usage for Automatic Interface Generation and NatSpec<a class="headerlink" href="#usage-for-automatic-interface-generation-and-natspec" title="Permalink to this headline">¶</a></h2>
+<p>The metadata is used in the following way: A component that wants to interact
+with a contract (e.g. Mist) retrieves the code of the contract, from that
+the Swarm hash of a file which is then retrieved.
+That file is JSON-decoded into a structure like above.</p>
+<p>The component can then use the ABI to automatically generate a rudimentary
+user interface for the contract.</p>
+<p>Furthermore, Mist can use the userdoc to display a confirmation message to the user
+whenever they interact with the contract.</p>
+<p>Additional information about Ethereum Natural Specification (NatSpec) can be found <a class="reference external" href="https://github.com/ethereum/wiki/wiki/Ethereum-Natural-Specification-Format">here</a>.</p>
+</div>
+<div class="section" id="usage-for-source-code-verification">
+<h2>Usage for Source Code Verification<a class="headerlink" href="#usage-for-source-code-verification" title="Permalink to this headline">¶</a></h2>
+<p>In order to verify the compilation, sources can be retrieved from Swarm
+via the link in the metadata file.
+The compiler of the correct version (which is checked to be part of the “official” compilers)
+is invoked on that input with the specified settings. The resulting
+bytecode is compared to the data of the creation transaction or <code class="docutils literal"><span class="pre">CREATE</span></code> opcode data.
+This automatically verifies the metadata since its hash is part of the bytecode.
+Excess data corresponds to the constructor input data, which should be decoded
+according to the interface and presented to the user.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Contract Metadata</a><ul>
+<li><a class="reference internal" href="#encoding-of-the-metadata-hash-in-the-bytecode">Encoding of the Metadata Hash in the Bytecode</a></li>
+<li><a class="reference internal" href="#usage-for-automatic-interface-generation-and-natspec">Usage for Automatic Interface Generation and NatSpec</a></li>
+<li><a class="reference internal" href="#usage-for-source-code-verification">Usage for Source Code Verification</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="using-the-compiler.html" title="previous chapter">Using the compiler</a></li>
+      <li>Next: <a href="abi-spec.html" title="next chapter">Application Binary Interface Specification</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/metadata.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016-2017, Ethereum.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/metadata.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
